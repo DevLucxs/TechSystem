@@ -1,0 +1,72 @@
+﻿@page "/cadastro"
+@inject HttpClient Http
+@using cadastro.Client.Models
+@inject NavigationManager Navigation
+@layout Shared.PublicLayout
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TechSystem - Criar Conta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/cadastro.css">
+</head>
+
+<body>
+    <main class="page">
+        <!-- Imagem à esquerda -->
+        <section class="left">
+            <img src="assets/_163d66ba-473a-40af.png" alt="TechSystem" class="big-logo" />
+        </section>
+
+        <!-- Card à direita -->
+        <aside class="right">
+            <div class="login-card" role="region" aria-label="Cadastro">
+                <img src="assets/symbol.png" alt="Icone TechSystem" class="card-icon" />
+
+                <form class="form" onsubmit="return false;">
+                    <input class="field" type="text" placeholder="Nome Completo" @bind="usuario.Nome" required />
+                    <input class="field" type="email" placeholder="Email" @bind="usuario.Email" required />
+                    <input class="field" type="password" placeholder="Senha" @bind="usuario.Senha" required />
+                    <button class="btn btn-login" type="submit" @onclick="Cadastrar">Criar Conta</button>
+                </form>
+
+                <div class="secondary">
+                    <button class="btn btn-outline" type="button" @onclick="VoltarLogin">Voltar ao Login</button>
+                </div>
+            </div>
+        </aside>
+    </main>
+</body>
+
+@if (!string.IsNullOrEmpty(mensagem))
+{
+    <div class="alert @classeMensagem" role="alert">
+        @mensagem
+    </div>
+}
+
+@code {
+    Usuario usuario = new Usuario();
+    string mensagem = string.Empty;
+    string classeMensagem = "alert-info";
+
+    void VoltarLogin()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    async Task Cadastrar()
+    {
+        var response = await Http.PostAsJsonAsync("https://localhost:7002/api/usuarios", usuario);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            mensagem = "Erro ao criar conta.";
+            classeMensagem = "alert-danger";
+        }
+    }
+}

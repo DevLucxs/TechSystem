@@ -1,0 +1,1291 @@
+﻿body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+    letter-spacing: 0px;
+    overflow: auto;
+    --minContent: 0;
+    --hSizing: FILL;
+    --vSizing: FILL;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: STRETCH;
+}
+
+.text-a {
+    --minContent: 41;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.unfold-more {
+    height: 23px;
+    flex-shrink: 0;
+    --minContent: 6;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+
+
+/* data */
+
+.data {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-shrink: 0;
+    padding-left: 1px;
+    --minContent: 118;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+/* end data*/
+
+
+.menu-text-id {
+    margin-left: 1px;
+    text-align: center;
+    --minContent: 7;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.btn {
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+    font-style: normal;
+    letter-spacing: 0px;
+    text-align: center;
+    padding: 0 7px;
+    --minContent: 93;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+.menu-frame {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.menu-menu {
+    container: menu-menu / inline-size;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter';
+    font-weight: 700;
+    --minContent: 1646;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: left;
+    padding: 0px 27px;
+    --minContent: 333;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.header-logo-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 183px;
+    --minContent: 0;
+    --hSizing: FILL;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.header-barra {
+    position: absolute;
+    top: 0px;
+    left: 20px;
+    box-shadow: 0px 2px 36.3px 4px rgba(0, 0, 0, 0.25);
+    width: calc(100% - 18px);
+    height: 103px;
+    max-width: 4150px;
+    background-color: #f9f9f9;
+    --minContent: 1247;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.header-logo {
+    position: absolute;
+    top: -35px;
+    left: 0;
+    width: 245px;
+    --minContent: 275;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.header-profile-right {
+    position: relative;
+    z-index: 1;
+    width: 279px;
+    height: 100px;
+    flex-shrink: 0;
+    border-left: 1px solid #e4e4e4;
+    --minContent: 279;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MAX;
+    --pConstraintVertical: MIN;
+}
+
+.header-text-desenvolvedor {
+    position: absolute;
+    top: 57px;
+    left: 94px;
+    right: 0;
+    color: #05a6de;
+    font-size: 15px;
+    --minContent: 184;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.header-text-lucas {
+    position: absolute;
+    top: 31px;
+    left: 94px;
+    right: 60px;
+    color: #000;
+    font-size: 20px;
+    --minContent: 124;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.header-profile-img {
+    position: absolute;
+    top: 31px;
+    left: 32px;
+    width: 45px;
+    --minContent: 45;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu-row {
+    margin-left: 9px;
+    margin-top: -102px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    align-self: start;
+    color: #fff;
+    text-align: right;
+    --minContent: 1646;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    margin-bottom: 180px;
+}
+
+.card-barra-lateral {
+    position: absolute;
+    top: 82px; /* altura do cabeçalho */
+    left: 0;
+    height: calc(100vh - 10px);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0px;
+    background-color: #eaeaea;
+    padding: 22px 22px 39px 22px;
+    --minContent: 89;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.card-barra-lateral-img {
+    width: 36px;
+    flex-shrink: 0;
+    --minContent: 36;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.card-barra-lateral-home-icon {
+    margin-top: 1px;
+}
+
+.card-barra-lateral-headphone {
+    margin-top: 1px;
+}
+
+.card-barra-lateral-docs-icon {
+    margin-top: 1px;
+}
+
+.card-barra-lateral-config-icon {
+    margin-top: 1px;
+}
+
+.card-barra-lateral-exit-icon {
+    margin-top: 1px;
+}
+
+.menu-botton-em1 {
+    position: fixed;
+    top: 183px;
+    left: 250px;
+    z-index: 998;
+    margin-left: 126px;
+    width: 100%;
+    max-width: 360px;
+    flex-shrink: 0;
+    --minContent: 486;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu-img1 {
+    position: absolute;
+    top: 10px;
+    left: 25px;
+    width: 78px;
+    --minContent: 78;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.card1 {
+    position: relative;
+    z-index: 1;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: rgba(222, 7, 7, 0.72);
+    padding: 13px 78px 12px 78px;
+    --minContent: 360;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+}
+
+.card-text1 {
+    --minContent: 204;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.card-subtitle1 {
+    margin: 0 67px;
+    --minContent: 204;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-botton-em2 {
+    position: fixed;
+    top: 183px;
+    left: 800px;
+    z-index: 998;
+    width: 100%;
+    max-width: 360px;
+    flex-shrink: 0;
+    --minContent: 360;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu-img2 {
+    position: absolute;
+    top: 9px;
+    left: 20px;
+    width: 78px;
+    --minContent: 78;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.card2 {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background-color: rgba(255, 106, 0, 0.77);
+    padding: 13px 44px;
+    --minContent: 360;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+}
+
+.card-text2 {
+    --minContent: 272;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.card-subtitle2 {
+    margin: 0 101px;
+    --minContent: 272;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-botton {
+    position: fixed;
+    top: 183px;
+    left: 1600px;
+    z-index: 998;
+    width: 100%;
+    height: 142px;
+    max-width: 660px;
+    flex-shrink: 0;
+    --minContent: 360;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu-img3 {
+    position: absolute;
+    top: 10px;
+    left: 23px;
+    width: 78px;
+    --minContent: 78;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu-finalizadas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 32px);
+    max-width: 360px;
+    background-color: rgba(29, 200, 7, 0.63);
+    padding: 13px 65px 58px 65px;
+    --minContent: 360;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+}
+
+.menu-subtitle {
+    position: absolute;
+    top: 44px;
+    left: 199px;
+    right: 129px;
+    text-align: left;
+    --minContent: 32;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+
+.menu-group {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* importante para não centralizar verticalmente */
+    padding-top: 80px; /* espaço extra acima da lista */
+    margin-top: 40px;
+}
+
+.menu-tabela {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-weight: 300;
+    --minContent: 1308;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-botton-search {
+    display: flex;
+    align-items: flex-start;
+    align-self: end;
+    --minContent: 321;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MAX;
+    --pConstraintVertical: MIN;
+}
+
+.menu-btn-perquisar-pelo {
+    position: relative;
+    z-index: 1;
+    width: 229px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 0px;
+    text-align: center;
+    background-color: #fff;
+    padding: 9px 8px 8px 8px;
+    border: 1px solid rgba(186, 150, 150, 0.36);
+    --minContent: 229;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintVertical: MIN;
+}
+
+.btn-blue-right {
+    margin-left: -1px;
+    width: 93px;
+    display: flex;
+    gap: 11px;
+    flex-shrink: 0;
+    color: #000;
+    font-size: 14px;
+    font-style: normal;
+    letter-spacing: 0px;
+    text-align: left;
+    background-color: #6da4e5;
+    padding: 8px 7px 9px 7px;
+    border-radius: 5px;
+    --minContent: 92;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintVertical: MIN;
+}
+
+.btn-blue-right-icon {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    --minContent: 17;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.btn-blue-right-label {
+    margin-top: 1px;
+    --minContent: 41;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-col {
+    container: menu-col / inline-size;
+    display: flex;
+    flex-direction: column;
+    color: #000;
+    font-size: 14px;
+    background-color: rgba(196, 196, 196, 0.43);
+    padding: 33px 48px 87px 48px;
+    border-radius: 20px;
+    --minContent: 1308;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+
+}
+
+
+
+/* linha */
+
+.linha {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: #fff;
+    padding: 0 24px;
+    border: 1px solid #d5d5d5;
+    --minContent: 1182;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.linha-text {
+    --minContent: 145;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.linha-text-id {
+    text-align: center;
+    --minContent: 22;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+/* end linha*/
+
+
+.menu-titulos {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 85px;
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 700;
+    background-color: #fff;
+    padding: 19px 24px 8px 24px;
+    border: 1px solid #d5d5d5;
+    border-radius: 10px;
+    --minContent: 1191;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+}
+
+
+
+/* row-a */
+
+.row-a {
+    margin-top: 1px;
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+    padding: 0 1px;
+    --minContent: 92;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+/* end row-a*/
+
+
+
+
+/* row-b */
+
+.row-b {
+    display: flex;
+    justify-content: space-between;
+    flex-shrink: 0;
+    --minContent: 88;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.row-graphic {
+    height: 100%;
+    flex-shrink: 0;
+    align-self: center;
+    --minContent: 8;
+    --hSizing: FIXED;
+    --vSizing: FILL;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: SCALE;
+}
+/* end row-b*/
+
+
+.menu-id {
+    width: 70px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 6px;
+    flex-shrink: 0;
+    text-align: center;
+    padding: 0 8px;
+    --minContent: 70;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text1 {
+    margin-left: 29px;
+    margin-top: 3px;
+}
+
+.menu-unfold-more {
+    width: 6px;
+}
+
+.chamados {
+    width: 92px;
+    gap: 7px;
+}
+
+    .chamados .row-text1 {
+        margin-top: 3px;
+    }
+
+    .chamados .row-unfold-more {
+        width: 10px;
+    }
+
+.data-de-abertura {
+    width: 134px;
+    justify-content: space-between;
+    padding-right: 7px;
+}
+
+    .data-de-abertura .row-text1 {
+        margin-top: 3px;
+    }
+
+    .data-de-abertura .row-unfold-more {
+        width: 8px;
+    }
+
+.propriedade {
+    width: 88px;
+    height: 23px;
+    align-items: unset;
+    gap: 6px;
+}
+
+    .propriedade .row-text1 {
+        margin-top: 3px;
+        align-self: start;
+    }
+
+    .propriedade .row-unfold-more {
+        width: 9px;
+        height: 100%;
+        align-self: center;
+    }
+
+.andamento {
+    margin-top: 1px;
+    width: 88px;
+    height: 20px;
+}
+
+    .andamento .row-text2 {
+        margin-top: 2px;
+        align-self: start;
+    }
+
+    .andamento .row-graphic {
+        width: 8px;
+    }
+
+.previsao {
+    width: 78px;
+    gap: 6px;
+}
+
+    .previsao .row-text1 {
+        margin-top: 4px;
+    }
+
+    .previsao .row-unfold-more {
+        width: 10px;
+        height: 22px;
+    }
+
+.aprovacao {
+    width: 81px;
+    height: 23px;
+}
+
+    .aprovacao .row-text2 {
+        margin-top: 4px;
+        align-self: start;
+    }
+
+    .aprovacao .row-graphic {
+        width: 10px;
+    }
+
+.menu-linha1 {
+    margin: 24px 4px 0 4px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 58px;
+    background-color: #fff;
+    padding: 14px 24px;
+    border: 1px solid #d5d5d5;
+    --minContent: 1176;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text {
+    margin-top: 7px;
+    --minContent: 182;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text-id1 {
+    margin-left: 14px;
+    margin-top: 7px;
+    text-align: center;
+    --minContent: 17;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text2 {
+    margin-left: 28px;
+}
+
+.data2 {
+    margin-top: 7px;
+    width: 118px;
+    padding-right: 4px;
+}
+
+.menu-btn-a {
+    margin-left: 59px;
+    width: 32px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+    font-style: normal;
+    letter-spacing: 0px;
+    text-align: center;
+    background-color: #e74d4d;
+    padding: 5px 7px 12px 7px;
+    --minContent: 91;
+    --hSizing: FIXED;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text-equipe-a1 {
+    margin-left: 77px;
+}
+
+.menu-text3 {
+    margin-left: 32px;
+}
+
+.menu-text-david-alves {
+    margin-left: 16px;
+}
+
+.menu-linha2 {
+    margin: 22px 19px 0 66px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 59px;
+    --minContent: 1212;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text-id2 {
+    margin-top: 9px;
+}
+
+.menu-text-internet-instavel {
+    margin-left: 44px;
+    margin-top: 9px;
+}
+
+.data3 {
+    margin-left: 39px;
+    margin-top: 11px;
+    width: 115px;
+    padding-right: 2px;
+}
+
+.menu-btn-prioridade1 {
+    margin-left: 61px;
+    background-color: #e74d4d;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+.menu-text-equipe-b1 {
+    margin-left: 77px;
+    margin-top: 9px;
+}
+
+.menu-text4 {
+    margin-left: 33px;
+    margin-top: 9px;
+}
+
+.menu-text-rubens1 {
+    margin-top: 9px;
+}
+
+.linha1 {
+    margin: 24px 4px 0 4px;
+    gap: 59px;
+    padding-top: 13px;
+    padding-bottom: 14px;
+}
+
+    .linha1 .linha-text-id {
+        margin-left: 15px;
+        margin-top: 9px;
+    }
+
+    .linha1 .linha-text1 {
+        margin-left: 37px;
+        margin-top: 11px;
+    }
+
+    .linha1 .data1 {
+        margin-left: 33px;
+        margin-top: 11px;
+        width: 116px;
+        padding-right: 2px;
+    }
+
+    .linha1 .linha-btn-m {
+        margin-left: 60px;
+        background-color: #8be299;
+        padding-top: 10px;
+        padding-bottom: 8px;
+    }
+
+    .linha1 .linha-text-equipe-c {
+        margin-left: 77px;
+        margin-top: 9px;
+    }
+
+    .linha1 .linha-text2 {
+        margin-left: 29px;
+        margin-top: 11px;
+    }
+
+    .linha1 .linha-text-geovane {
+        margin-top: 11px;
+    }
+
+.menu-linha3 {
+    margin: 33px 42px 0 66px;
+    display: flex;
+    align-items: flex-start;
+    gap: 52px;
+    padding-left: 1px;
+    --minContent: 1129;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text-id3 {
+    margin-left: 0;
+    margin-top: 8px;
+}
+
+.menu-text-remover-acesso {
+    margin-left: 11px;
+    margin-top: 1px;
+    flex-grow: 1;
+    text-align: center;
+    --minContent: 191;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.data4 {
+    margin-top: 8px;
+    width: 115px;
+    padding-right: 3px;
+}
+
+.menu-btn-prioridade2 {
+    margin-left: 68px;
+    background-color: #8be299;
+    padding-top: 10px;
+    padding-bottom: 8px;
+}
+
+.menu-text-equipe-a2 {
+    margin: 7px 41px 0 auto;
+}
+
+.menu-text5 {
+    margin-right: 19px;
+    margin-top: 10px;
+}
+
+.menu-text-geovane {
+    margin-top: 9px;
+}
+
+.linha2 {
+    margin-left: 8px;
+    margin-top: -7px;
+    gap: 55px;
+    padding-top: 15px;
+    padding-bottom: 12px;
+}
+
+    .linha2 .linha-text-id {
+        margin-left: 21px;
+        margin-top: 8px;
+    }
+
+    .linha2 .linha-text1 {
+        margin-left: 33px;
+        margin-top: 8px;
+    }
+
+    .linha2 .data1 {
+        margin-left: 27px;
+        margin-top: 8px;
+        width: 114px;
+        padding-right: 3px;
+    }
+
+    .linha2 .linha-btn-m {
+        margin-left: 72px;
+        background-color: rgba(93, 150, 237, 0.78);
+        padding-top: 8px;
+        padding-bottom: 10px;
+    }
+
+    .linha2 .linha-text-equipe-c {
+        margin-left: 79px;
+        margin-top: 8px;
+    }
+
+    .linha2 .linha-text2 {
+        margin-left: 37px;
+        margin-top: 5px;
+    }
+
+    .linha2 .linha-text-geovane {
+        margin-top: 8px;
+    }
+
+.menu-linha4 {
+    margin: 25px 19px 0 66px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 55px;
+    --minContent: 1212;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-text6 {
+    margin-top: 11px;
+}
+
+.menu-text-atualizacao {
+    margin-left: 17px;
+    margin-top: 11px;
+}
+
+.row1 {
+    margin-left: 19px;
+    margin-top: 11px;
+    width: 113px;
+    padding-right: 2px;
+}
+
+.menu-btn-prioridade3 {
+    margin-left: 69px;
+    background-color: rgba(93, 150, 237, 0.78);
+    padding-top: 8px;
+    padding-bottom: 10px;
+}
+
+.menu-text-equipe-b2 {
+    margin-left: 79px;
+    margin-top: 8px;
+}
+
+.menu-text7 {
+    margin-left: 37px;
+    margin-top: 8px;
+}
+
+.menu-text-rubens2 {
+    margin-top: 11px;
+}
+
+.menu-text8 {
+    position: absolute;
+    z-index: 2;
+    top: 635px;
+    left: 649px;
+    right: 621px;
+    color: rgba(0, 0, 0, 0.5);
+    --min-font-size: 15;
+    --max-font-size: 16;
+    font-size: var(--interpolate);
+    font-weight: 900;
+    --minContent: 38;
+    --hSizing: FILL;
+    --vSizing: HUG;
+    --pConstraintHorizontal: STRETCH;
+    --pConstraintVertical: MIN;
+}
+
+.menu-skip-next {
+    position: absolute;
+    z-index: 3;
+    top: 639px;
+    left: 698px;
+    width: 12px;
+    height: 11px;
+    --minContent: 12;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.barra-btn {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0px;
+    margin-bottom: 24px;
+    margin-top: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+    .barra-btn:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .barra-btn img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+
+/* container queries (flex rows) */
+
+@container menu-menu (width < 1645px) {
+    .menu-row {
+        margin-bottom: 16px; /* separa os cards da lista */
+    }
+
+    .menu-row > * {
+        margin-left: unset !important;
+        margin-right: unset !important;
+        margin-top: unset !important;
+    }
+}
+
+@container menu-col (width < 1180px) {
+    .linha {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1px;
+    }
+
+        .linha > * {
+            margin-left: unset !important;
+            margin-right: unset !important;
+            margin-top: unset !important;
+        }
+}
+
+@container menu-col (width < 1189px) {
+    .menu-titulos {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+        .menu-titulos > * {
+            margin-left: unset !important;
+            margin-right: unset !important;
+            margin-top: unset !important;
+        }
+}
+
+@container menu-col (width < 1174px) {
+    .menu-linha1 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+        .menu-linha1 > * {
+            margin-left: unset !important;
+            margin-right: unset !important;
+            margin-top: unset !important;
+        }
+}
+
+@container menu-col (width < 1211px) {
+    .menu-linha2 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+        .menu-linha2 > * {
+            margin-left: unset !important;
+            margin-right: unset !important;
+            margin-top: unset !important;
+        }
+}
+
+@container menu-col (width < 1127px) {
+    .menu-linha3 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+        .menu-linha3 > * {
+            margin-left: unset !important;
+            margin-right: unset !important;
+            margin-top: unset !important;
+        }
+
+        .menu-linha3 > .menu-text-remover-acesso {
+            width: 100%;
+        }
+}
+
+@container menu-col (width < 1211px) {
+    .menu-linha4 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+        .menu-linha4 > * {
+            margin-left: unset !important;
+            margin-right: unset !important;
+            margin-top: unset !important;
+        }
+}
+
+
+
+/* CENTRALIZAR A TABELA COMPLETA */
+.table-container,
+.menu-titulos,
+.menu-linha1,
+.menu-linha2,
+.menu-linha3,
+.menu-linha4 {
+    justify-content: center !important;
+}
+.linha1,
+.linha2 {
+    width: 80%; /* ou ajuste para 75% / 90% se quiser */
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+

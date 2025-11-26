@@ -1,0 +1,107 @@
+﻿@page "/configuracoes-usuario"
+@layout Shared.TelaUsuario
+@inject HttpClient Http
+@inject cadastro.Client.Services.IdiomaService IdiomaService
+
+<link rel="stylesheet" href="css/configuracao.css" />
+
+<div class="config-container">
+    <h1 class="config-titulo">@textos[idiomaSelecionado]["Titulo"]</h1>
+
+    <div class="config-item">
+        <label class="config-label">@textos[idiomaSelecionado]["Idioma"]</label>
+        <select class="config-select" @bind="idiomaSelecionado" @bind:event="oninput">
+            <option>PORTUGUÊS</option>
+            <option>ENGLISH</option>
+            <option>ESPAÑOL</option>
+        </select>
+    </div>
+
+    <div class="config-item">
+        <label class="config-label">@textos[idiomaSelecionado]["Notificacoes"]</label>
+        <select class="config-select" @bind="notificacoesAtivas" @bind:event="oninput">
+            <option>LIGADO</option>
+            <option>DESLIGADO</option>
+        </select>
+    </div>
+
+    <div class="config-item">
+        <label class="config-label">@textos[idiomaSelecionado]["Versao"]</label>
+        <span class="config-valor">1.0.0</span>
+    </div>
+
+    <div class="config-item">
+        <button class="config-sair" @onclick="Logout">@textos[idiomaSelecionado]["Sair"]</button>
+    </div>
+</div>
+
+@code {
+    private string idiomaSelecionado
+    {
+        get => _idiomaSelecionado;
+        set
+        {
+            _idiomaSelecionado = value;
+            IdiomaService.MudarIdioma(_idiomaSelecionado); // atualiza globalmente
+            SalvarConfiguracoes();
+        }
+    }
+    private string _idiomaSelecionado = "PORTUGUÊS";
+
+    private string notificacoesAtivas
+    {
+        get => _notificacoesAtivas;
+        set
+        {
+            _notificacoesAtivas = value;
+            SalvarConfiguracoes();
+        }
+    }
+    private string _notificacoesAtivas = "LIGADO";
+
+    private Dictionary<string, Dictionary<string, string>> textos = new()
+    {
+        ["PORTUGUÊS"] = new()
+        {
+            ["Titulo"] = "CONFIGURAÇÃO",
+            ["Idioma"] = "Idioma",
+            ["Notificacoes"] = "Notificações",
+            ["Versao"] = "Versão",
+            ["Sair"] = "Sair"
+        },
+        ["ENGLISH"] = new()
+        {
+            ["Titulo"] = "SETTINGS",
+            ["Idioma"] = "Language",
+            ["Notificacoes"] = "Notifications",
+            ["Versao"] = "Version",
+            ["Sair"] = "Logout"
+        },
+        ["ESPAÑOL"] = new()
+        {
+            ["Titulo"] = "CONFIGURACIÓN",
+            ["Idioma"] = "Idioma",
+            ["Notificacoes"] = "Notificaciones",
+            ["Versao"] = "Versión",
+            ["Sair"] = "Salir"
+        }
+    };
+
+    private async Task SalvarConfiguracoes()
+    {
+        var config = new
+        {
+            Idioma = idiomaSelecionado,
+            Notificacoes = notificacoesAtivas
+        };
+
+        await Http.PostAsJsonAsync("https://localhost:7002/api/configuracoes", config);
+    }
+
+
+    private void Logout()
+    {
+        // Aqui você pode redirecionar para a tela de login ou limpar sessão
+        Console.WriteLine("Usuário saiu.");
+    }
+}

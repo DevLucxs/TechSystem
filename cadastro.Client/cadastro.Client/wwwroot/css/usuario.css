@@ -1,0 +1,320 @@
+﻿.menu-group {
+    position: absolute;
+    top: 283px;
+    left: 438px;
+    width: calc(100% - 32px);
+    max-width: 1308px;
+    min-height: 678px;
+    font-family: 'Roboto';
+}
+
+.menu-tabela {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-weight: 500;
+}
+
+.menu-botton-search {
+    position: relative;
+    top: 100px;
+    display: flex;
+    align-items: flex-start;
+    align-self: end;
+}
+
+.menu-btn-perquisar-pelo {
+    width: 229px;
+    min-height: 34px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 13px;
+    font-style: normal;
+    letter-spacing: 0px;
+    text-align: center;
+    background-color: #fff;
+    padding: 9px 8px 8px 8px;
+    border: 1px solid rgba(186, 150, 150, 0.36);
+}
+
+.btn-blue-right {
+    margin-left: -1px;
+    width: 93px;
+    min-height: 34px;
+    display: flex;
+    gap: 11px;
+    flex-shrink: 0;
+    color: #000;
+    font-size: 14px;
+    font-style: normal;
+    letter-spacing: 0px;
+    text-align: unset;
+    background-color: #6da4e5;
+    padding: 0 7px;
+    border-radius: 5px;
+}
+
+.btn-blue-right-icon {
+    margin-top: 8px;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+.btn-blue-right-label {
+    margin-top: 9px;
+    text-align: left;
+}
+
+.menu-col {
+    container: menu-col / inline-size;
+    display: flex;
+    position: relative;
+    top: 100px;
+    flex-direction: column;
+    color: #000;
+    font-size: 14px;
+    background-color: rgba(196, 196, 196, 0.43);
+    padding: 33px 48px 87px 48px;
+    border-radius: 20px;
+}
+
+
+
+/* linha */
+
+.linha {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: #fff;
+    padding: 0 24px;
+    border: 1px solid #d5d5d5;
+}
+
+.linha-text {
+    text-align: left;
+}
+
+.linha-text-id {
+    text-align: center;
+}
+/* end linha*/
+
+
+.menu-titulos,
+.linha {
+    display: grid;
+    grid-template-columns: 60px 160px 160px 120px 120px 160px 120px; /* aumentei a largura da coluna de prioridade */
+    align-items: center;
+    padding: 10px 25px;
+    border: 1px solid #d5d5d5;
+    background-color: #fff;
+    font-weight: 500;
+    gap: 0;
+}
+
+    .menu-titulos > div,
+    .linha > div {
+        padding: 10px 12px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+        /* Centraliza o botão dentro da célula de prioridade (4ª coluna) */
+        /* Centraliza o botão de prioridade (4ª coluna) */
+        .linha > div:nth-child(4) {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Centraliza o botão de status (5ª coluna) */
+        .linha > div:nth-child(5) {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+
+.menu-botton-em1 {
+    position: relative;
+    margin-left: 126px;
+    margin-top: 102px;
+    width: 360px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+
+
+.card1 {
+    position: relative;
+    z-index: 1;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: rgba(222, 7, 7, 0.72);
+    padding: 13px 78px 12px 78px;
+}
+
+.card-subtitle1 {
+    width: 50px;
+    align-self: center;
+}
+
+.menu-botton-em2 {
+    position: relative;
+    left: 400px;
+    margin-top: 102px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    width: 360px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.menu-img2 {
+    position: absolute;
+    top: 9px;
+    left: 20px;
+    width: 78px;
+}
+
+.card2 {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background-color: rgba(255, 106, 0, 0.77);
+    padding: 13px 44px;
+}
+
+.card-subtitle2 {
+    width: 70px;
+    align-self: center;
+}
+
+.menu-botton {
+    position: relative;
+    left: 600px;
+    margin-top: 102px;
+    width: 360px;
+    flex-shrink: 0;
+}
+
+.menu-img3 {
+    position: absolute;
+    top: 10px;
+    left: 23px;
+    width: 78px;
+}
+
+.menu-finalizadas {
+    position: absolute;
+    top: 0px;
+    left: -10px;
+    width: calc(100% - 32px);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    max-width: 360px;
+    text-align: right;
+    background-color: rgba(29, 200, 7, 0.63);
+    padding: 25px 65px 58px 65px;
+}
+
+.menu-subtitle {
+    position: absolute;
+    top: 44px;
+    left: 199px;
+    right: 129px;
+    text-align: left;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.card-barra-lateral {
+    position: absolute;
+    top: 100px; /* altura do cabeçalho */
+    left: 0;
+    height: calc(100vh - 10px);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+    background-color: #eaeaea;
+    padding: 22px 22px 39px 22px;
+    --minContent: 89;
+    --hSizing: HUG;
+    --vSizing: HUG;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+
+.header-barra {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    box-shadow: 0px 2px 36.3px 4px rgba(0, 0, 0, 0.25);
+    width: 6800px;
+    height: 103px;
+    max-width: 4150px;
+    background-color: #f9f9f9;
+    --minContent: 1247;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+.header-logo {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    width: 245px;
+    --minContent: 275;
+    --hSizing: FIXED;
+    --vSizing: FIXED;
+    --pConstraintHorizontal: MIN;
+    --pConstraintVertical: MIN;
+}
+
+
+.card-barra-lateral-home-icon {
+    margin-top: 24px;
+}
+
+.card-barra-lateral-headphone {
+    margin-top: 1px;
+}
+
+.card-barra-lateral-docs-icon {
+    margin-top: 1px;
+}
+
+.card-barra-lateral-config-icon {
+    margin-top: 1px;
+}
+
+.card-barra-lateral-exit-icon {
+    margin-top: 400px;
+}

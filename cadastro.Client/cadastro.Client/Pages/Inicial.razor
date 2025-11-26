@@ -1,0 +1,332 @@
+﻿@page "/inicial"
+@inject NavigationManager Navigation
+@layout Shared.TechSystemLayout
+@using cadastro.Client.Models
+@inject HttpClient Http
+@inject cadastro.Client.Services.IdiomaService IdiomaService
+
+
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/inicial.css" />
+
+</head>
+
+<body>
+    <div class="menu">
+        <div class="menu-frame">
+            <div class="menu-menu">
+
+                <div class="menu-row">
+
+                    <div class="menu-botton-em1">
+                        <img src="assets/sino.png" class="menu-img1" />
+
+                        <div class="card1">
+                            <p class="text">EM ABERTO</p>
+                            <h2 class="card-subtitle1 subtitle">@emAberto</h2>
+                        </div>
+                    </div>
+
+                    <div class="menu-botton-em2">
+                        <img src="assets/alert.png" class="menu-img2" />
+                        <div class="card2">
+                            <p class="text">EM ANDAMENTO</p>
+                            <h2 class="card-subtitle2 subtitle">@emAndamento</h2>
+                        </div>
+                    </div>
+
+                    <div class="menu-botton">
+                        <img src="assets/confirm.png" class="menu-img3" />
+                        <div class="menu-finalizadas text">FINALIZADAS</div>
+                        <h2 class="menu-subtitle subtitle">@finalizados</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-tabela">
+                    <div class="menu-botton-search">
+                        <button class="btn-filter hover-dark" @onclick="AbrirFiltro">
+                            <object data="assets/filter-icon.svg" class="btn-filter-icon" type="image/svg+xml"></object>
+                            <p class="btn-filter-label">Filtrar Chamados</p>
+                        </button>
+                    </div>
+
+                    @if (mostrarFiltro)
+                    {
+                        <div class="modal-overlay">
+                            <div class="modal">
+                                <h3>Filtrar Chamados</h3>
+
+                                <label>Status:</label>
+                                <select @bind="filtroStatus">
+                                    <option value="">Todos</option>
+                                    <option value="Aberto">Aberto</option>
+                                    <option value="Andamento">Em Andamento</option>
+                                    <option value="Finalizado">Finalizado</option>
+                                </select>
+
+                                <label>Prioridade:</label>
+                                <select @bind="filtroPrioridade">
+                                    <option value="">Todas</option>
+                                    <option value="Alta">Alta</option>
+                                    <option value="Média">Média</option>
+                                    <option value="Baixa">Baixa</option>
+                                </select>
+
+                                <label>Responsável:</label>
+                                <input type="text" @bind="filtroResponsavel" placeholder="Digite o nome" />
+
+                                <div class="modal-actions">
+                                    <button class="btn-apply" @onclick="AplicarFiltro">Aplicar</button>
+                                    <button class="btn-cancel" @onclick="FecharFiltro">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                    <div class="menu-col">
+                        <div class="menu-titulos">
+                            <div>ID</div>
+                            <div>Chamados</div>
+                            <div>Data de Abertura</div>
+                            <div>Prioridade</div>
+                            <div>Status</div>
+                            <div>Previsão</div>
+                            <div>Aprovação</div>
+                        </div>
+
+                        @foreach (var chamado in chamados)
+                        {
+                            <div class="linha">
+                                <div>@chamado.Id</div>
+                                <div>@chamado.Titulo</div>
+                                <div>@chamado.DataCriacao.ToString("dd/MM/yyyy HH:mm")</div>
+                                <div>
+                                    <button class="btn" style="background-color:@GetCorPrioridade(chamado.Prioridade)">
+                                        @chamado.Prioridade.Substring(0, 1)
+                                    </button>
+                                </div>
+
+                                <div style="color:@GetCorStatus(chamado.Status)">
+                                    @(string.IsNullOrWhiteSpace(chamado.Status) ? "-" : chamado.Status)
+
+                                    <!-- Botão para alternar status -->
+                                    <button class="btn-status" @onclick="() => MudarStatus(chamado.Id)">
+                                        ↻
+                                    </button>
+                                </div>
+
+
+                                <!-- Campo editável de Previsão -->
+                                <div>
+                                    <input type="date"
+                                           value="@(chamado.Previsao.HasValue
+                                                               ? chamado.Previsao.Value.ToString("yyyy-MM-dd")
+                                                           : DateTime.Today.ToString("yyyy-MM-dd"))"
+                                       @onchange="async e => await AtualizarPrevisao(chamado.Id, DateTime.Parse(e.Value?.ToString()))" />
+                                </div>
+
+
+                                <!-- Campo editável de Responsável -->
+                                <div>
+                                    <select @onchange="async e => await AtualizarResponsavel(chamado.Id, e.Value?.ToString())">
+                                        <option value="">Selecione</option>
+                                        <option value="David Alves" selected="@(chamado.Responsavel == "David Alves")">David Alves</option>
+                                        <option value="Rubens Machado" selected="@(chamado.Responsavel == "Rubens Machado")">Rubens Machado</option>
+                                        <option value="Geovane Alves" selected="@(chamado.Responsavel == "Geovane Alves")">Geovane Alves</option>
+                                    </select>
+                                </div>
+                            </div>
+                        }
+
+
+
+                        <div class="paginacao-numerica">
+                            @for (int i = 1; i <= TotalPaginas; i++)
+                            {
+                                <button class="pagina-btn @(i == paginaAtual ? "ativa" : "")" @onclick="() => IrParaPagina(i)">
+                                    @i
+                                </button>
+                            }
+
+                            @if (paginaAtual < TotalPaginas)
+                            {
+                                <button class="pagina-btn" @onclick="() => IrParaPagina(paginaAtual + 1)">›</button>
+                            }
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+@code {
+    List<ChamadoForm> chamados = new();
+    int emAberto = 0;
+    int emAndamento = 0;
+    int finalizados = 0;
+
+    int paginaAtual = 1;
+    int tamanhoPagina = 6;
+
+    IEnumerable<ChamadoForm> ChamadosPaginados =>
+        chamados.Skip((paginaAtual - 1) * tamanhoPagina).Take(tamanhoPagina);
+
+    int TotalPaginas => (int)Math.Ceiling((double)chamados.Count / tamanhoPagina);
+
+    void IrParaPagina(int numero)
+    {
+        if (numero >= 1 && numero <= TotalPaginas)
+            paginaAtual = numero;
+    }
+
+
+    bool mostrarFiltro = false;
+    string filtroStatus = "";
+    string filtroPrioridade = "";
+    string filtroResponsavel = "";
+
+    void AbrirFiltro() => mostrarFiltro = true;
+    void FecharFiltro() => mostrarFiltro = false;
+
+    void AplicarFiltro()
+    {
+        var todos = chamados; // já carregados
+        var filtrados = todos.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(filtroStatus))
+            filtrados = filtrados.Where(c => c.Status == filtroStatus);
+
+        if (!string.IsNullOrEmpty(filtroPrioridade))
+            filtrados = filtrados.Where(c => c.Prioridade == filtroPrioridade);
+
+        if (!string.IsNullOrEmpty(filtroResponsavel))
+            filtrados = filtrados.Where(c => c.Responsavel?.Contains(filtroResponsavel, StringComparison.OrdinalIgnoreCase) ?? false);
+
+        chamados = filtrados.ToList();
+        mostrarFiltro = false;
+    }
+
+    async Task AtualizarPrevisao(int id, DateTime novaPrevisao)
+    {
+        var chamado = chamados.FirstOrDefault(c => c.Id == id);
+        if (chamado != null)
+        {
+            chamado.Previsao = novaPrevisao;
+            await Http.PutAsJsonAsync($"https://localhost:7002/api/chamado/{id}", chamado);
+            await CarregarChamados();
+        }
+    }
+
+    async Task AtualizarResponsavel(int id, string novoResponsavel)
+    {
+        var chamado = chamados.FirstOrDefault(c => c.Id == id);
+        if (chamado != null)
+        {
+            chamado.Responsavel = novoResponsavel;
+            await Http.PutAsJsonAsync($"https://localhost:7002/api/chamado/{id}", chamado);
+            await CarregarChamados();
+        }
+    }
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Carrega a primeira vez
+        await CarregarChamados();
+
+        // Cria loop de atualização automática
+        _ = Task.Run(async () =>
+        {
+            while (true)
+            {
+                await CarregarChamados();
+                StateHasChanged(); // força atualização da UI
+                await Task.Delay(10000); // espera 10 segundos
+            }
+        });
+    }
+
+    private async Task CarregarChamados()
+    {
+        chamados = await Http.GetFromJsonAsync<List<ChamadoForm>>("https://localhost:7002/api/chamado");
+
+        emAberto = chamados.Count(c => c.Status == "Aberto");
+        emAndamento = chamados.Count(c => c.Status == "Andamento");
+        finalizados = chamados.Count(c => c.Status == "Finalizado");
+    }
+
+    string GetCorPrioridade(string prioridade)
+    {
+        return prioridade switch
+        {
+            "Alta" => "#e74d4d",
+            "Média" => "#8be299",
+            "Baixa" => "rgba(93,150,237,0.78)",
+            _ => "#ccc"
+        };
+    }
+
+    string GetCorStatus(string status)
+    {
+        return status switch
+        {
+            "Aberto" => "#e74d4d",        // vermelho
+            "Andamento" => "#ffa500",     // laranja
+            "Finalizado" => "#1dc807",    // verde
+            _ => "#000"
+        };
+    }
+
+    async Task MudarStatus(int id)
+    {
+        var chamado = chamados.FirstOrDefault(c => c.Id == id);
+        if (chamado != null)
+        {
+            chamado.Status = chamado.Status switch
+            {
+                "Aberto" => "Andamento",
+                "Andamento" => "Finalizado",
+                "Finalizado" => "Aberto",
+                _ => "Aberto"
+            };
+
+            await Http.PutAsJsonAsync($"api/chamado/{id}", chamado);
+
+
+            await CarregarChamados(); // recarrega após mudar status
+            StateHasChanged();
+        }
+    }
+
+    private Dictionary<string, Dictionary<string, string>> textos = new()
+    {
+        ["PORTUGUÊS"] = new() { ["Titulo"] = "INICIAL" },
+        ["ENGLISH"] = new() { ["Titulo"] = "HOME" },
+        ["ESPAÑOL"] = new() { ["Titulo"] = "INICIO" }
+    };
+
+    private string GetTexto(string chave) =>
+        textos[IdiomaService.IdiomaAtual][chave];
+
+    protected override void OnInitialized()
+    {
+        IdiomaService.OnChange += StateHasChanged; // atualiza quando idioma mudar
+    }
+}
+
+
+

@@ -1,0 +1,98 @@
+﻿@page "/notificacoes-usuario"
+@inject HttpClient Http
+@layout Shared.TelaUsuario
+@using cadastro.Client.Models
+@inject cadastro.Client.Services.IdiomaService IdiomaService
+
+
+<link rel="stylesheet" href="css/notificacao.css" />
+
+<div class="notificacoes-topo-esquerda">
+    <div class="notificacoes-box">
+        <h1 class="notificacoes-titulo">
+            <img src="assets/Notificacao icon.png" alt="Notificações" /> NOTIFICAÇÕES
+            @if (qtdNovosChamados > 0)
+            {
+                <span class="badge">@qtdNovosChamados</span>
+            }
+        </h1>
+        <div class="notificacoes-container">
+            @if (listaNotificacoes == null)
+            {
+                <p>Carregando notificações...</p>
+            }
+            else if (!listaNotificacoes.Any())
+            {
+                <p>Nenhuma notificação encontrada.</p>
+            }
+            else
+            {
+                @foreach (var n in listaNotificacoes)
+                {
+                    <div class="notificacao @(n.Tipo?.ToLower())">
+                        <div class="notificacao-icon">@n.Icone</div>
+                        <div class="notificacao-conteudo">
+                            <div class="notificacao-titulo">@n.Titulo</div>
+                            <div class="notificacao-mensagem">@n.Mensagem</div>
+                            <div class="notificacao-tempo">@n.Tempo</div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@code {
+    List<Notificacao> listaNotificacoes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarNotificacoes();
+        _ = Task.Run(async () =>
+        {
+            while (true)
+            {
+                await CarregarNotificacoes();
+                StateHasChanged();
+                await Task.Delay(10000);
+            }
+        });
+    }
+
+    int qtdNovosChamados = 0;
+
+    private async Task CarregarNotificacoes()
+    {
+        listaNotificacoes = await Http.GetFromJsonAsync<List<Notificacao>>("https://localhost:7002/api/notificacoes");
+
+        // conta quantos são do tipo "chamado" ou recentes
+        qtdNovosChamados = listaNotificacoes.Count(n => n.Tipo == "chamado");
+    }
+
+
+
+    private Dictionary<string, Dictionary<string, string>> textos = new()
+    {
+        ["PORTUGUÊS"] = new() { ["Titulo"] = "INICIAL" },
+        ["ENGLISH"] = new() { ["Titulo"] = "HOME" },
+        ["ESPAÑOL"] = new() { ["Titulo"] = "INICIO" }
+    };
+
+    private string GetTexto(string chave) =>
+        textos[IdiomaService.IdiomaAtual][chave];
+
+    protected override void OnInitialized()
+    {
+        // se inscreve no evento para atualizar quando idioma mudar
+        IdiomaService.OnChange += StateHasChanged;
+    }
+}
+
+
+
+}

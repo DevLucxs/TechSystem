@@ -1,0 +1,59 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+
+
+<link href="https://fonts.googleapis.com/css2?family=Inter&family=Roboto&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/home.css" />
+
+<div class="menu">
+    <div class="menu-frame">
+        <div class="menu-menu">
+            <header class="header">
+                <div class="header-logo-left">
+                    <div class="header-barra"></div>
+                    <img src="assets/_163d66ba-473a-40af.png" class="header-logo" />
+                </div>
+
+                <div class="header-profile-right">
+                    <p class="header-text-desenvolvedor">Desenvolvedor Back-end</p>
+                    <p class="header-text-lucas">Lucas</p>
+                    <img src="assets/Profile.png" class="header-profile-img" />
+                </div>
+            </header>
+
+            <div class="menu-row">
+                <div class="card-barra-lateral">
+                    <button class="barra-btn" @onclick="IrParaHome">
+                        <img src="assets/home.png" alt="Home" />
+                    </button>
+                    <button class="barra-btn" @onclick="IrParaRelatorio">
+                        <img src="assets/docs icon.png" alt="Documentos" />
+                    </button>
+                    <button class="barra-btn" @onclick="IrParaNotificacao">
+                        <img src="assets/Notificacao icon.png" alt="Notificações" />
+                    </button>
+                    <button class="barra-btn" @onclick="IrParaConfiguracao">
+                        <img src="assets/config icon.png" alt="Configurações" />
+                    </button>
+                    <button class="barra-btn card-barra-lateral-exit-icon" @onclick="Sair">
+                        <img src="assets/exit.png" alt="Sair" />
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-group">
+            @Body
+        </div>
+    </div>
+</div>
+
+@code {
+    void IrParaHome() => Navigation.NavigateTo("/inicial");
+    void IrParaChamado() => Navigation.NavigateTo("/chamado");
+    void IrParaRelatorio() => Navigation.NavigateTo("/relatorios");
+    void IrParaNotificacao() => Navigation.NavigateTo("/notificacoes");
+    void IrParaConfiguracao() => Navigation.NavigateTo("/configuracoes");
+    void Sair() => Navigation.NavigateTo("/");
+}

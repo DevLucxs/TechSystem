@@ -1,0 +1,126 @@
+﻿@page "/chamado-usuario"
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject cadastro.Client.Services.IaServiceClient IaServiceClient
+@layout Shared.TelaUsuario
+@using cadastro.Shared;
+@using cadastro.Client.Models
+@inject cadastro.Client.Services.IdiomaService IdiomaService
+@inject cadastro.Client.Services.SessaoService Sessao
+
+
+<link rel="stylesheet" href="css/chamado.css" />
+
+<EditForm Model="@chamado" OnValidSubmit="AbrirChamado">
+    <div class="main-container">
+        <div class="card-chamado">
+            <h1>
+                <img src="assets/headphone icon.png" alt="Abrir Chamado" />
+                ABRIR CHAMADO
+            </h1>
+
+            <!-- sem <form> aqui -->
+            <div class="abrir-chamado-campo">
+                <label>* Título:</label>
+                <InputText @bind-Value="chamado.Titulo" />
+            </div>
+
+            <div class="abrir-chamado-campo">
+                <label>* Descrição:</label>
+                <InputTextArea @bind-Value="chamado.Descricao" />
+            </div>
+
+            <div class="abrir-chamado-campo">
+                <label>Sugestão da IA:</label>
+                <textarea readonly>@sugestaoIA</textarea>
+                <button type="button" @onclick="GerarSugestao">Gerar Sugestão</button>
+
+
+
+            </div>
+
+            <div class="abrir-chamado-campo">
+                <label>* Prioridade:</label>
+                <InputSelect @bind-Value="chamado.Prioridade" class="priority-select">
+                    <option value="">Selecione</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Média">Média</option>
+                    <option value="Baixa">Baixa</option>
+                </InputSelect>
+            </div>
+
+            <div class="abrir-chamado-campo">
+                <label>Arquivo (Opcional):</label>
+                <InputFile OnChange="HandleFileUpload" />
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="enviar">
+                    <img src="assets/confirm.png" /> Abrir Chamado
+                </button>
+
+                <button type="button" class="cancelar" @onclick="Cancelar">
+                    <img src="assets/cancel.png" /> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    ChamadoForm chamado = new();
+    IBrowserFile arquivo;
+    string sugestaoIA = "";
+
+    async Task GerarSugestao()
+    {
+        var request = new SugestaoRequest
+        {
+            Titulo = chamado.Titulo,
+            Descricao = chamado.Descricao
+        };
+
+        sugestaoIA = await IaServiceClient.GerarSugestao(chamado.Titulo, chamado.Descricao);
+    }
+
+
+    public class SugestaoResponse
+    {
+        public string Sugestao { get; set; } = string.Empty;
+    }
+
+
+    async Task AbrirChamado()
+    {
+        chamado.Categoria = "Rede"; // se existir no model
+        chamado.DataCriacao = DateTime.Now;
+        chamado.Status = "Aberto";
+        chamado.UsuarioId = Sessao.IdUsuario; // 🔑 precisa existir
+
+        var response = await Http.PostAsJsonAsync("api/chamado", chamado);
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/usuario");
+        }
+        else
+        {
+            var erro = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Erro ao abrir chamado: {erro}");
+        }
+    }
+
+
+
+
+    async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        arquivo = e.File;
+    }
+
+    void Cancelar() 
+    { 
+        Navigation.NavigateTo("/chamado"); 
+    }
+
+}
+

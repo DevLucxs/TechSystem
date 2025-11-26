@@ -1,0 +1,130 @@
+﻿@page "/usuario"
+@inject NavigationManager Navigation
+@layout Shared.TelaUsuario
+@using cadastro.Client.Models
+@inject HttpClient Http
+@inject cadastro.Client.Services.SessaoService Sessao
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/usuario.css" />
+</head>
+
+<body>
+    <div class="menu">
+        <div class="menu-frame">
+            <div class="menu-menu">
+
+                <!-- Cards de status -->
+                <div class="menu-row">
+                    <div class="menu-botton-em1">
+                        <img src="assets/sino.png" class="menu-img1" />
+                        <div class="card1">
+                            <p class="text">EM ABERTO</p>
+                            <h2 class="card-subtitle1 subtitle">@emAberto</h2>
+                        </div>
+                    </div>
+
+                    <div class="menu-botton-em2">
+                        <img src="assets/alert.png" class="menu-img2" />
+                        <div class="card2">
+                            <p class="text">EM ANDAMENTO</p>
+                            <h2 class="card-subtitle2 subtitle">@emAndamento</h2>
+                        </div>
+                    </div>
+
+                    <div class="menu-botton">
+                        <img src="assets/confirm.png" class="menu-img3" />
+                        <div class="menu-finalizadas text">FINALIZADAS</div>
+                        <h2 class="menu-subtitle subtitle">@finalizados</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de chamados do usuário -->
+            <div class="menu-group">
+                <div class="menu-tabela">
+                    <div class="menu-col">
+                        <div class="menu-titulos">
+                            <div>ID</div>
+                            <div>Chamados</div>
+                            <div>Data de Abertura</div>
+                            <div>Prioridade</div>
+                            <div>Status</div>
+                            <div>Previsão</div>
+                        </div>
+
+                        @foreach (var chamado in chamados)
+                        {
+                            <div class="linha">
+                                <div>@chamado.Id</div>
+                                <div>@chamado.Titulo</div>
+                                <div>@chamado.DataCriacao.ToString("dd/MM/yyyy HH:mm")</div>
+                                <div>
+                                    <button class="btn" style="background-color:@GetCorPrioridade(chamado.Prioridade)">
+                                        @chamado.Prioridade.Substring(0, 1)
+                                    </button>
+                                </div>
+                                <div style="color:@GetCorStatus(chamado.Status)">
+                                    @(string.IsNullOrWhiteSpace(chamado.Status) ? "-" : chamado.Status)
+                                </div>
+                                <div>
+                                    @(chamado.Previsao.HasValue
+                                                                    ? chamado.Previsao.Value.ToString("dd/MM/yyyy HH:mm")
+                                                                    : "-")
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+@code {
+    List<ChamadoForm> chamados = new();
+    int emAberto = 0;
+    int emAndamento = 0;
+    int finalizados = 0;
+
+    string usuarioAtual => Sessao.NomeUsuario;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarChamados();
+    }
+
+    private async Task CarregarChamados()
+    {
+        var todos = await Http.GetFromJsonAsync<List<ChamadoForm>>("api/chamado");
+
+        // Filtra só os chamados do usuário logado pelo Id
+        chamados = todos.Where(c => c.UsuarioId == Sessao.IdUsuario).ToList();
+
+
+        emAberto = chamados.Count(c => c.Status == "Aberto");
+        emAndamento = chamados.Count(c => c.Status == "Andamento");
+        finalizados = chamados.Count(c => c.Status == "Finalizado");
+    }
+
+    string GetCorPrioridade(string prioridade) => prioridade switch
+    {
+        "Alta" => "#e74d4d",
+        "Média" => "#8be299",
+        "Baixa" => "rgba(93,150,237,0.78)",
+        _ => "#ccc"
+    };
+
+    string GetCorStatus(string status) => status switch
+    {
+        "Aberto" => "#e74d4d",
+        "Andamento" => "#ffa500",
+        "Finalizado" => "#1dc807",
+        _ => "#000"
+    };
+
+}

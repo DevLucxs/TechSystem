@@ -1,0 +1,50 @@
+
+:root {
+	/* responsive margins / paddings */
+	--margin-sm: 16px;
+	--margin-md: 32px;
+}
+
+* {
+	--min-screen-size: 430;
+	--max-screen-size: 1918;
+	--interpolate-diff: calc(var(--max-font-size) - var(--min-font-size));
+	--interpolate: clamp(calc(var(--min-font-size) * 1px), calc((var(--min-font-size) * 1px) + var(--interpolate-diff) * ((100vw - calc(var(--min-screen-size) * 1px)) / (var(--max-screen-size) - var(--min-screen-size)))), calc(var(--max-font-size) * 1px));
+}
+
+html {
+	height: 100%;
+	font-size: 16px;
+}
+
+
+
+/* text utility classes */
+
+.subtitle {
+	font-size: 36px;
+	font-family: 'Inter';
+	font-weight: 700;
+	line-height: normal;
+	letter-spacing: 0px;
+}
+
+.text {
+	font-size: 24px;
+	font-family: 'Inter';
+	font-weight: 700;
+	line-height: normal;
+	letter-spacing: 0px;
+}
+
+
+
+/* button hover utility classes */
+
+.hover-bright:hover {
+	filter: brightness(1.2);
+}
+
+.hover-dark:hover {
+	filter: brightness(0.85);
+}

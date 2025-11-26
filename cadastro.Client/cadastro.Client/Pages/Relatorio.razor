@@ -1,0 +1,138 @@
+﻿@page "/relatorios"
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@layout Shared.TechSystemLayout
+@using cadastro.Client.Models
+@inject cadastro.Client.Services.IdiomaService IdiomaService
+
+
+<link rel="stylesheet" href="css/relatorio.css" />
+
+<EditForm Model="@relatorio" OnValidSubmit="EnviarRelatorio">
+    <div class="main-container">
+        <div class="card-chamado">
+            <h1>
+                <img src="assets/docs icon.png" alt="Documentos" />
+                RELATÓRIO
+            </h1>
+
+            <div class="abrir-chamado-campo">
+                <label>* Título:</label>
+                <InputText @bind-Value="relatorio.Titulo" />
+            </div>
+
+            <div class="abrir-chamado-campo">
+                <label>* Data:</label>
+                <InputDate @bind-Value="relatorio.Data" />
+            </div>
+
+            <div class="abrir-chamado-campo">
+                <label>* Descrição:</label>
+                <InputTextArea @bind-Value="relatorio.Descricao" />
+            </div>
+
+            <div class="abrir-chamado-campo">
+                <label>Arquivo (Opcional):</label>
+                <InputFile OnChange="HandleFileUpload" />
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="enviar">
+                    <img src="assets/confirm.png" /> Enviar
+                </button>
+
+                <button type="button" class="cancelar" @onclick="Cancelar">
+                    <img src="assets/cancel.png" /> Cancelar
+                </button>
+
+                <button type="button" class="enviar" @onclick="AbrirModal">
+                    <img src="assets/docs-icon.png" /> Ver Relatórios
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+<!-- Modal flutuante -->
+@if (mostrarModal)
+{
+    <div class="modal-overlay" @onclick="FecharModal">
+        <div class="modal-content" @onclick:stopPropagation="true">
+            <h2>Relatórios já feitos</h2>
+            @if (relatorios == null)
+            {
+                <p>Carregando...</p>
+            }
+            else if (!relatorios.Any())
+            {
+                <p>Nenhum relatório encontrado.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var r in relatorios)
+                    {
+                        <li>
+                            <strong>@r.Titulo</strong> - @r.Data.ToString("dd/MM/yyyy")<br />
+                            @r.Descricao
+                        </li>
+                    }
+                </ul>
+            }
+            <button class="cancelar" @onclick="FecharModal">Fechar</button>
+        </div>
+    </div>
+}
+
+@code {
+    RelatorioForm relatorio = new();
+    IBrowserFile arquivo;
+    List<RelatorioForm> relatorios;
+    bool mostrarModal = false;
+
+    async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        arquivo = e.File;
+    }
+
+    async Task EnviarRelatorio()
+    {
+        var response = await Http.PostAsJsonAsync("https://localhost:7002/api/relatorios", relatorio);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var criado = await response.Content.ReadFromJsonAsync<RelatorioForm>();
+            Console.WriteLine($"Relatório criado: {criado.Titulo}");
+            // Atualiza lista e abre modal
+            await CarregarRelatorios();
+            mostrarModal = true;
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Erro ao criar relatório");
+        }
+    }
+
+    async Task CarregarRelatorios()
+    {
+        relatorios = await Http.GetFromJsonAsync<List<RelatorioForm>>("https://localhost:7002/api/relatorios");
+        StateHasChanged();
+    }
+
+    void Cancelar()
+    {
+        Navigation.NavigateTo("/inicial");
+    }
+
+    void AbrirModal()
+    {
+        mostrarModal = true;
+        CarregarRelatorios();
+    }
+
+    void FecharModal()
+    {
+        mostrarModal = false;
+    }
+}
