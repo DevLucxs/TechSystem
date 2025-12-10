@@ -30,7 +30,7 @@ Este projeto foi desenvolvido no contexto acadêmico como **PIM do 3º semestre 
 - Blazor
 - SQL Server
 - Dapper / Entity Framework
-- Integração com IA (API de LLM / OpenAI)
+- Integração com IA (API de LLM / Gemini)
 - Git & GitHub
 
 ---
