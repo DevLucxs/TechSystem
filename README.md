@@ -41,10 +41,10 @@ Git & GitHub
 🖼️ Screenshots
 
 🔐 Login
-<a href="https://ibb.co/QtfyXFv"><img src="https://i.ibb.co/wjR5YNh/Captura-de-tela-2025-12-09-151823.png" alt="Captura-de-tela-2025-12-09-151823" border="0"></a>
+
 
 📊 Dashboard
-<a href="https://ibb.co/0pg9RmkN"><img src="https://i.ibb.co/V07CcJdy/Captura-de-tela-2025-12-09-184712.png" alt="Captura-de-tela-2025-12-09-184712" border="0"></a>
+<a href="https://ibb.co/QtfyXFv"><img src="https://i.ibb.co/QtfyXFv/Captura-de-tela-2025-12-09-151823.png" alt="Captura-de-tela-2025-12-09-151823" border="0"></a>
 
 📝 Open Ticket
 <a href="https://ibb.co/v6B4whwT"><img src="https://i.ibb.co/1tnGvMvP/Captura-de-tela-2025-12-09-184748.png" alt="Captura-de-tela-2025-12-09-184748" border="0"></a>
@@ -104,3 +104,5 @@ The application will start locally in your browser.
 
 Suggestions and improvements are very welcome!
 Feel free to open issues or pull requests.
+
+<a href="https://ibb.co/QtfyXFv"><img src="https://i.ibb.co/QtfyXFv/Captura-de-tela-2025-12-09-151823.png" alt="Captura-de-tela-2025-12-09-151823" border="0"></a> <a href="https://ibb.co/0pg9RmkN"><img src="https://i.ibb.co/0pg9RmkN/Captura-de-tela-2025-12-09-184712.png" alt="Captura-de-tela-2025-12-09-184712" border="0"></a> <a href="https://ibb.co/v6B4whwT"><img src="https://i.ibb.co/v6B4whwT/Captura-de-tela-2025-12-09-184748.png" alt="Captura-de-tela-2025-12-09-184748" border="0"></a> <a href="https://ibb.co/WWDm2QRy"><img src="https://i.ibb.co/WWDm2QRy/Captura-de-tela-2025-12-09-190258.png" alt="Captura-de-tela-2025-12-09-190258" border="0"></a> <a href="https://ibb.co/hJhwmDSQ"><img src="https://i.ibb.co/hJhwmDSQ/Captura-de-tela-2025-12-09-190451.png" alt="Captura-de-tela-2025-12-09-190451" border="0"></a>
