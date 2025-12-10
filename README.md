@@ -39,14 +39,22 @@ Integration with AI (OpenAI / LLM API)
 Git & GitHub
 
 🖼️ Screenshots
+
 🔐 Login
-<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Login.png" width="70%"> </p>
+<a href="https://ibb.co/QtfyXFv"><img src="https://i.ibb.co/wjR5YNh/Captura-de-tela-2025-12-09-151823.png" alt="Captura-de-tela-2025-12-09-151823" border="0"></a>
+
 📊 Dashboard
-<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Dashboard.png" width="70%"> </p>
+<a href="https://ibb.co/0pg9RmkN"><img src="https://i.ibb.co/V07CcJdy/Captura-de-tela-2025-12-09-184712.png" alt="Captura-de-tela-2025-12-09-184712" border="0"></a>
+
 📝 Open Ticket
-<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/AbrirChamado.png" width="70%"> </p>
+<a href="https://ibb.co/v6B4whwT"><img src="https://i.ibb.co/1tnGvMvP/Captura-de-tela-2025-12-09-184748.png" alt="Captura-de-tela-2025-12-09-184748" border="0"></a>
+
 📄 Reports
-<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Relatorios.png" width="70%"> </p>
+<a href="https://ibb.co/WWDm2QRy"><img src="https://i.ibb.co/99wQrJdT/Captura-de-tela-2025-12-09-190258.png" alt="Captura-de-tela-2025-12-09-190258" border="0"></a>
+
+📄 View Reports
+<a href="https://ibb.co/hJhwmDSQ"><img src="https://i.ibb.co/jPBsrgS0/Captura-de-tela-2025-12-09-190451.png" alt="Captura-de-tela-2025-12-09-190451" border="0"></a>
+
 ⚙️ Project Setup
 
 The repository includes only a safe configuration template:
