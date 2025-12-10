@@ -1,134 +1,98 @@
-# TechSystem – Ticket Management System
-<p align="center"> 
- <img src="https://i.ibb.co/8gVGvs8C/Tech-System.jpg" width="200"> 
-</p>
+🌐 TechSystem – Web Ticket Management System
+<p align="center"> <img src="https://i.ibb.co/8gVGvs8C/Tech-System.jpg" width="200"> </p>
+🚀 Overview
 
-**🚀 Overview**
+TechSystem Web is a web-based ticket management system developed with C# and Blazor, focused on automating ticket triage using Artificial Intelligence and providing a modern, responsive, and efficient user experience.
 
-The TechSystem is a desktop application built in C# (WinForms) for internal ticket management.
-It’s designed to streamline ticket creation, automate analysis via AI, and provide a modern, clear, and efficient interface.
+The system simulates a real-world technical support environment, offering full ticket lifecycle management, intelligent suggestions, and reporting features.
 
-**🧩 Features**
+🧩 Features
 
-- 📊 Dashboard with overall metrics
-- 📈 Ticket status graphs
-- 🤖 Ticket creation with automated AI analysis
-- 📄 Detailed reports with filters
-- ⚡ Quick status editing
-- 🔔 Internal notification system
-- 🎨 Clean and intuitive interface
+🔐 User authentication and access control
 
-**🛠 Technologies Used**
+📊 Interactive dashboard with real-time metrics
 
-- C# (.NET Framework)
-- WinForms
-- SQL Server
-- Dapper
-- OpenAI API
-- Git & GitHub
+🤖 Automated AI solution suggestion before ticket creation
 
----
+📝 Ticket creation and management
 
-## 🖼️ Screenshots
+📄 Reports with filters and full history
 
-### 🔐 Login
+🔔 Internal notification system
 
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Login.png" width="70%">
-</p>
+⚡ Quick ticket status updates
 
-### 🧾 User Registration
+🎨 Modern and responsive web interface
 
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Registro.png" width="70%">
-</p>
+🛠 Technologies Used
 
-### 📊 Dashboard
+C# (.NET)
 
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Dashboard.png" width="70%">
-</p>
+Blazor
 
-### 📝 Open Ticket
+SQL Server
 
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/AbrirChamado.png" width="70%">
-</p>
+Dapper / Entity Framework (if applicable)
 
-### 📄 Reports
+Integration with AI (OpenAI / LLM API)
 
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Relatorios.png" width="70%">
-</p>
+Git & GitHub
 
-### 🔔 Notifications
+🖼️ Screenshots
+🔐 Login
+<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Login.png" width="70%"> </p>
+📊 Dashboard
+<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Dashboard.png" width="70%"> </p>
+📝 Open Ticket
+<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/AbrirChamado.png" width="70%"> </p>
+📄 Reports
+<p align="center"> <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Relatorios.png" width="70%"> </p>
+⚙️ Project Setup
 
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Notificacoes.png" width="70%">
-</p>
+The repository includes only a safe configuration template:
 
-### ⚙️ Settings
+appsettings.example.json → local setup template
 
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/Configuracoes.png" width="70%">
-</p>
-
-### 🔄 Password Reset
-
-<p align="center">
- <img src="https://raw.githubusercontent.com/sstardustt/TechSystem/main/assets/RedefinirSenha.png" width="70%">
-</p>
-
----
-
-**⚙️ Project Setup**
-
-The repository only includes the safe configuration template:
-
-- `App.config.example` → template for local setup
-
-The real `App.config` is excluded from the repository for security.
+The real appsettings.json is excluded from the repository for security.
 
 What you need to do:
 
-- Copy `App.config.example`
-- Rename it to `App.config`
+Copy appsettings.example.json
+
+Rename it to appsettings.json
 
 Fill in your credentials:
 
-- Database `ConnectionString`
-- `OpenAIApiKey`
+SQL Server ConnectionString
 
-It uses the standard .NET App.config structure — just replace the placeholder values.
+AI API Key (OpenAI or equivalent)
 
----
-
-**▶️ Running the Project**
-
-```bash
+▶️ Running the Project
 git clone https://github.com/sstardustt/TechSystem.git
-```
 
-Copy `App.config.example` → `App.config`  
-Fill in your connection string and API key  
-Open the project in Visual Studio  
-Press **F5** to run  
 
----
+Open the project in Visual Studio
+Restore NuGet packages
+Configure appsettings.json
+Press F5 to run
 
-**🗺️ Roadmap**
+The application will start locally in your browser.
 
-- 🌗 Light/Dark theme  
-- 👥 User permissions system  
-- 📝 Audit logs  
-- 📤 Reports export  
-- 🧱 Fully customizable dashboard  
+🗺️ Roadmap
 
----
+🌗 Light/Dark theme
 
-**🤝 Contributions**
+👥 Role-based user permissions
 
-Suggestions and improvements are welcome.  
+📝 Audit logs
+
+📤 Report export (PDF/Excel)
+
+🧱 Fully customizable dashboard
+
+☁️ Cloud deployment (Azure)
+
+🤝 Contributions
+
+Suggestions and improvements are very welcome!
 Feel free to open issues or pull requests.
-
----
