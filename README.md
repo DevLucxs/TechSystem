@@ -1,8 +1,6 @@
 # 🌐 TechSystem – Sistema Web de Gestão de Chamados com IA
 
-<p align="center"> 
- <img src="assets/Tech-System.jpg" width="200"> 
-</p>
+<p align="center"> <img src="https://i.ibb.co/8gVGvs8C/Tech-System.jpg" width="200"> </p>
 
 ## 🚀 Visão Geral
 
