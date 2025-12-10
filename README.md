@@ -118,22 +118,6 @@ Versionamento com Git
 
 Estruturação de banco de dados
 
-🗺️ Roadmap
-
-🌗 Tema claro/escuro
-
-👥 Sistema de permissões por perfil
-
-📝 Logs de auditoria
-
-📤 Exportação de relatórios (PDF / Excel)
-
-🧱 Dashboard totalmente customizável
-
-☁️ Deploy em nuvem (Azure)
-
-🤝 Contribuições
-
 Sugestões e melhorias são muito bem-vindas!
 Sinta-se à vontade para abrir issues ou pull requests.
 
