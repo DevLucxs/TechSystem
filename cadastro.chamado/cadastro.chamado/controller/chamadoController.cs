@@ -3,6 +3,7 @@ using cadastro.chamado.models;
 using cadastro.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using cadastro.chamado.Services;
 
 namespace cadastro.chamado.controller
 {

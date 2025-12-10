@@ -225,7 +225,7 @@
 }
 
 .card-barra-lateral-exit-icon {
-    margin-top: 180px;
+    margin-top: 170px;
 }
 
 .menu-botton-em1 {
@@ -349,29 +349,60 @@
     font-weight: 500;
 }
 
-.menu-botton-search {
+.menu-botton-filter {
     position: relative;
     top: 100px;
     display: flex;
-    align-items: flex-start;
-    align-self: end;
+    justify-content: flex-end; /* botão alinhado à direita */
+    padding: 0 20px;
 }
 
-.menu-btn-perquisar-pelo {
-    width: 229px;
-    min-height: 34px;
+/* Botão principal */
+.btn-filter {
     display: flex;
-    justify-content: center;
-    flex-shrink: 0;
-    color: rgba(0, 0, 0, 0.3);
-    font-size: 13px;
-    font-style: normal;
-    letter-spacing: 0px;
-    text-align: center;
-    background-color: #fff;
-    padding: 9px 8px 8px 8px;
-    border: 1px solid rgba(186, 150, 150, 0.36);
+    align-items: center;
+    gap: 8px; /* espaço entre ícone e texto */
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
+
+/* Ícone dentro do botão */
+.btn-filter-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Texto do botão */
+.btn-filter-label {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Hover com destaque */
+.btn-filter:hover,
+.hover-dark:hover {
+    background: linear-gradient(135deg, #06a6df, #06a6df);
+    color: #fff;
+    border-color: #06a6df;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+/* Active (ao clicar) */
+.btn-filter:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+
 
 .btn-blue-right {
     margin-left: -1px;

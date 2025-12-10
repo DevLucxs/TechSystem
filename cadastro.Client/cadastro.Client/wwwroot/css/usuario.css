@@ -239,17 +239,6 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 .card-barra-lateral {
     position: absolute;
     top: 100px; /* altura do cabeçalho */
@@ -316,5 +305,5 @@
 }
 
 .card-barra-lateral-exit-icon {
-    margin-top: 400px;
+    margin-top: 300px;
 }

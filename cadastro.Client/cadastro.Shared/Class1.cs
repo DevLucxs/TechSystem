@@ -18,4 +18,9 @@
         public string Titulo { get; set; }
         public string Descricao { get; set; }
     }
+
+    public class SugestaoResponse
+    {
+        public string Sugestao { get; set; } = string.Empty;
+    }
 }

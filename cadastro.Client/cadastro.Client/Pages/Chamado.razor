@@ -31,11 +31,12 @@
 
             <div class="abrir-chamado-campo">
                 <label>Sugestão da IA:</label>
-                <textarea readonly>@sugestaoIA</textarea>
+
+                <textarea class="ia-sugestao-text" readonly> @sugestaoIA </textarea>
+
                 <button type="button" @onclick="GerarSugestao">
                     Gerar Sugestão
                 </button>
-
             </div>
 
             <div class="abrir-chamado-campo">
@@ -106,9 +107,7 @@
 
     async Task AbrirChamado()
     {
-        chamado.Categoria = "Rede";
         chamado.DataCriacao = DateTime.Now;
-        chamado.Status = "Aberto";
         chamado.SugestaoIA = sugestaoIA;
         chamado.UsuarioId = Sessao.IdUsuario;
 
