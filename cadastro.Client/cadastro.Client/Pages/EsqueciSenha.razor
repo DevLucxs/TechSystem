@@ -1,0 +1,86 @@
+﻿@page "/esqueci-senha"
+@inject NavigationManager Navigation
+@layout Shared.PublicLayout
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TechSystem - Recuperar Senha</title>
+    <link href="css/login.css" rel="stylesheet">
+</head>
+    
+<body>
+    <div class="page @(exibirModal ? "blur-bg" : "")">
+        <div class="bg-glow"></div>
+
+        <div class="left">
+            <img src="assets/_163d66ba-473a-40af.png" alt="TECHSYSTEM" class="logo-techsystem" />
+        </div>
+
+        <div class="right">
+            <div class="login-card">
+                <img src="assets/symbol.png" alt="TECHSYSTEM" class="card-icon" />
+                
+                <h2 class="card-title">Recuperar Senha</h2>
+                <p class="card-subtitle">Enviaremos um link de recuperação para o seu e-mail.</p>
+
+                <div class="input-wrapper">
+                    <input class="field" type="email" placeholder="Seu e-mail cadastrado" @bind="emailRecuperacao" />
+                    <div class="focus-bar"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-login" @onclick="EnviarLink">Enviar Link</button>
+                    <button class="btn-outline" @onclick="VoltarLogin">Voltar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (exibirModal)
+    {
+        <div class="modal-overlay" @onclick:stopPropagation>
+            <div class="modal-content glass-card">
+                <div class="icon-success">
+                    <img src="assets/symbol.png" alt="Sucesso" class="modal-symbol-animated" />
+                </div>
+            
+                <h3>E-mail Enviado!</h3>
+            
+                <p>
+                    Se o endereço <strong>@emailRecuperacao</strong> estiver cadastrado,
+                    um link de recuperação chegará em instantes.
+                </p>
+            
+                <button class="btn-login"
+                        style="width: 100%; margin-top: 30px; position: relative; z-index: 100000;"
+                        @onclick="VoltarLogin">
+                    Entendi
+                </button>
+            </div>
+        </div>
+    }
+</body>
+
+@code {
+    private string emailRecuperacao = "";
+    private string mensagem = "";
+    private string classeMensagem = "";
+    private bool exibirModal = false;
+
+    private void VoltarLogin() => Navigation.NavigateTo("/");
+
+    private async Task EnviarLink()
+    {
+        if (string.IsNullOrEmpty(emailRecuperacao) || !emailRecuperacao.Contains("@"))
+        {
+            mensagem = "Por favor, insira um e-mail válido.";
+            classeMensagem = "alert-danger";
+            return;
+        }
+
+        // Simula o envio e abre o modal
+        exibirModal = true;
+        StateHasChanged();
+    }
+}

@@ -1,98 +1,447 @@
 ﻿@page "/notificacoes-usuario"
 @inject HttpClient Http
-@layout Shared.TelaUsuario
-@using cadastro.Client.Models
+@using cadastro.Shared.Models
+@inject cadastro.Client.Services.SessaoService Sessao
 @inject cadastro.Client.Services.IdiomaService IdiomaService
+@inject NotificacaoState State
+@layout Shared.TelaUsuario
+@implements IDisposable
+@inject IJSRuntime JS
 
-
-<link rel="stylesheet" href="css/notificacao.css" />
-
-<div class="notificacoes-topo-esquerda">
-    <div class="notificacoes-box">
-        <h1 class="notificacoes-titulo">
-            <img src="assets/Notificacao icon.png" alt="Notificações" /> NOTIFICAÇÕES
-            @if (qtdNovosChamados > 0)
-            {
-                <span class="badge">@qtdNovosChamados</span>
-            }
-        </h1>
-        <div class="notificacoes-container">
-            @if (listaNotificacoes == null)
-            {
-                <p>Carregando notificações...</p>
-            }
-            else if (!listaNotificacoes.Any())
-            {
-                <p>Nenhuma notificação encontrada.</p>
-            }
-            else
-            {
-                @foreach (var n in listaNotificacoes)
-                {
-                    <div class="notificacao @(n.Tipo?.ToLower())">
-                        <div class="notificacao-icon">@n.Icone</div>
-                        <div class="notificacao-conteudo">
-                            <div class="notificacao-titulo">@n.Titulo</div>
-                            <div class="notificacao-mensagem">@n.Mensagem</div>
-                            <div class="notificacao-tempo">@n.Tempo</div>
-                        </div>
-                    </div>
-                }
-            }
+<div class="page-container">
+    
+    <div class="header-central">
+        <div>
+            <h1 class="titulo-principal">Central de Alertas</h1>
+            <p class="subtitulo">Gerencie as atualizações dos seus chamados em tempo real.</p>
         </div>
+
+        @if (listaNotificacoes != null && listaNotificacoes.Any())
+        {
+            <button class="btn-limpar-moderno" @onclick="LimparTudo">
+                <span class="icon-btn">🧹</span> Marcar todas como lidas
+            </button>
+        }
+    </div>
+
+    <div class="notificacoes-feed">
+        @if (listaNotificacoes == null)
+        {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Sincronizando alertas...</p>
+            </div>
+        }
+        else if (!listaNotificacoes.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon-box">
+                    <img src="assets/Notificacao icon.png" class="img-empty" />
+                </div>
+                <h3>Sua caixa está limpa!</h3>
+                <p>Não há novas notificações para você no momento.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var n in listaNotificacoes)
+            {
+                <div class="noti-card-premium" style="border-left: 6px solid @GetCorPorTipo(n.Tipo)" @onclick="() => AbrirDetalhes(n)">
+                    <div class="noti-status-icon">
+                        @if (n.Tipo == "sucesso")
+                        {
+                            <img src="assets/confirm.png" style="width: 24px;" />
+                        }
+                        else if (n.Tipo == "status")
+                        {
+
+                            <span>🔄</span>
+                        }
+                        else
+                        {
+
+                            <span>📝</span>
+                        }
+                    </div>
+                     
+                    <div class="noti-info">
+                        <div class="noti-top-row">
+                            <span class="noti-badge-tipo" style="background: @GetCorPorTipo(n.Tipo)22; color: @GetCorPorTipo(n.Tipo)">
+                                @n.Tipo.ToUpper()
+                            </span>
+                            <span class="noti-date">@n.CriadoEm.ToString("dd MMM, HH:mm")</span>
+                        </div>
+                        <h4 class="noti-headline">@n.Titulo</h4>
+                        <p class="noti-subtext">@n.Mensagem</p>
+                    </div>
+
+                    <div class="noti-arrow">
+                        <span>›</span>
+                    </div>
+                </div>
+            }
+        }
+
+        @if (mostrarModal)
+        {
+            <div class="modal-overlay-noti" @onclick="() => mostrarModal = false">
+                <div class="modal-content-noti" @onclick:stopPropagation="true">
+                    <div class="modal-header-noti">
+                        <div class="icon-box-noti">
+                            @if (notificacaoSelecionada.Tipo == "sucesso")
+                            {
+                                <span>✅</span>
+                            }
+                            else
+                            {
+
+                                <span>📢</span>
+                            }
+                        </div>
+                        <div>
+                            <h2>@notificacaoSelecionada.Titulo</h2>
+                            <span>@notificacaoSelecionada.CriadoEm.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <button class="close-btn-noti" @onclick="() => mostrarModal = false">&times;</button>
+                    </div>
+            
+                    <div class="modal-body-noti">
+                        <p>@notificacaoSelecionada.Mensagem</p>
+                    </div>
+
+                    <div class="modal-footer-noti">
+                        <button class="btn-entendido" @onclick="() => mostrarModal = false">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        }
+
     </div>
 </div>
 
+<style>
+    :root {
+        --bg-color: #f8f9fc;
+        --text-main: #1e272e;
+        --text-muted: #868e96;
+        --accent: #05a6de;
+    }
 
+    .page-container {
+        padding: 40px;
+        background: var(--bg-color);
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+    }
 
+    .header-central {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 40px;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 20px;
+    }
 
+    .titulo-principal {
+        font-weight: 800;
+        color: var(--text-main);
+        font-size: 2.2rem;
+        margin: 0;
+        letter-spacing: -1px;
+    }
+
+    .subtitulo {
+        color: var(--text-muted);
+        margin: 5px 0 0 0;
+    }
+
+    /* Botão Estilizado */
+    .btn-limpar-moderno {
+        background: #ffffff;
+        color: #1e272e;
+        border: 1px solid #dcdde1;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-limpar-moderno:hover {
+            background: #f1f2f6;
+            border-color: #05a6de;
+            color: #05a6de;
+            transform: translateY(-1px);
+        }
+
+    /* Card Premium */
+    .noti-card-premium {
+        display: flex;
+        align-items: center;
+        background: white;
+        padding: 20px 25px;
+        border-radius: 16px;
+        gap: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        margin-bottom: 5px;
+    }
+
+        .noti-card-premium:hover {
+            transform: scale(1.01) translateX(5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+    .noti-status-icon {
+        width: 50px;
+        height: 50px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    .noti-info {
+        flex: 1;
+    }
+
+    .noti-top-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+
+    .noti-badge-tipo {
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 6px;
+        letter-spacing: 0.5px;
+    }
+
+    .noti-date {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .noti-headline {
+        margin: 0;
+        font-size: 1.05rem;
+        color: var(--text-main);
+        font-weight: 700;
+    }
+
+    .noti-subtext {
+        margin: 4px 0 0 0;
+        color: #57606f;
+        font-size: 0.92rem;
+        line-height: 1.4;
+    }
+
+    .noti-arrow {
+        color: #ced4da;
+        font-size: 1.8rem;
+        font-weight: 300;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-icon-box {
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .img-empty {
+        height: 40px;
+        opacity: 0.5;
+    }
+
+    /* Estilos do Modal */
+    .modal-overlay-noti {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content-noti {
+        background: white;
+        width: 90%; max-width: 500px;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @@keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header-noti {
+        display: flex; align-items: center; gap: 15px;
+        margin-bottom: 20px; border-bottom: 1px solid #eee;
+        padding-bottom: 15px; position: relative;
+    }
+
+    .icon-box-noti {
+        width: 45px; height: 45px; background: #05a6de15;
+        border-radius: 12px; display: flex; align-items: center;
+        justify-content: center; font-size: 1.2rem;
+    }
+
+    .modal-header-noti h2 { margin: 0; font-size: 1.3rem; color: #1e272e; }
+    .modal-header-noti span { font-size: 0.8rem; color: #868e96; }
+
+    .close-btn-noti {
+        position: absolute; right: 0; top: 0;
+        background: none; border: none; font-size: 1.8rem;
+        cursor: pointer; color: #ced4da;
+    }
+
+    .modal-body-noti p {
+        color: #57606f; line-height: 1.6; font-size: 1rem;
+        white-space: pre-wrap; margin-bottom: 25px;
+    }
+
+    .btn-entendido {
+        width: 100%; background: #05a6de; color: white;
+        border: none; padding: 12px; border-radius: 12px;
+        font-weight: 700; cursor: pointer; transition: background 0.2s;
+    }
+
+    .btn-entendido:hover { background: #048ebf; }
+
+</style>
 
 @code {
-    List<Notificacao> listaNotificacoes = new();
+    private List<Notificacao> listaNotificacoes;
+    private bool _disposed;
+    private bool _foiLidoNestaSessao = false;
+
+    // Variáveis para o Modal
+    private bool mostrarModal = false;
+    private Notificacao notificacaoSelecionada = new();
+
+    private string GetCorPorTipo(string tipo) => tipo?.ToLower() switch
+    {
+        "em progresso" => "#f1c40f", // Amarelo
+        "finalizada" => "#00d285",   // Verde
+        "sucesso" => "#00d285",
+        "em aberto" => "#ff4757",    // Vermelho
+        _ => "#05a6de"               // Azul padrão
+    };
 
     protected override async Task OnInitializedAsync()
     {
+        IdiomaService.OnChange += StateHasChanged;
         await CarregarNotificacoes();
-        _ = Task.Run(async () =>
-        {
-            while (true)
-            {
-                await CarregarNotificacoes();
-                StateHasChanged();
-                await Task.Delay(10000);
-            }
-        });
+        _ = Loop();
     }
 
-    int qtdNovosChamados = 0;
+    private async Task Loop()
+    {
+        while (!_disposed)
+        {
+            await Task.Delay(10000);
+            if (!_disposed) { await CarregarNotificacoes(); StateHasChanged(); }
+        }
+    }
 
     private async Task CarregarNotificacoes()
     {
-        listaNotificacoes = await Http.GetFromJsonAsync<List<Notificacao>>("https://localhost:7002/api/notificacoes");
+        try
+        {
+            var todas = await Http.GetFromJsonAsync<List<Notificacao>>("api/notificacoes");
+        
+            if (todas != null)
+            {
+                // 1. A LISTA DA TELA: Mostra tudo do usuário (para não sumir os cards)
+                listaNotificacoes = todas
+                    .Where(n => n.UsuarioId == Sessao.IdUsuario)
+                    .OrderByDescending(n => n.Id)
+                    .ToList();
 
-        // conta quantos são do tipo "chamado" ou recentes
-        qtdNovosChamados = listaNotificacoes.Count(n => n.Tipo == "chamado");
+                // 2. A BOLINHA (CONTADOR): Conta apenas o que NÃO está na lista de lidos
+                var apenasNovas = listaNotificacoes
+                    .Where(n => !State.IdsLidos.Contains(n.Id))
+                    .ToList();
+
+                // Atualiza o contador global com o que sobrou
+                State.SetContador(apenasNovas.Count);
+            
+                StateHasChanged();
+            }
+        }
+        catch { /* ... */ }
     }
 
-
-
-    private Dictionary<string, Dictionary<string, string>> textos = new()
+    private async Task AbrirDetalhes(Notificacao n)
     {
-        ["PORTUGUÊS"] = new() { ["Titulo"] = "INICIAL" },
-        ["ENGLISH"] = new() { ["Titulo"] = "HOME" },
-        ["ESPAÑOL"] = new() { ["Titulo"] = "INICIO" }
-    };
-
-    private string GetTexto(string chave) =>
-        textos[IdiomaService.IdiomaAtual][chave];
-
-    protected override void OnInitialized()
-    {
-        // se inscreve no evento para atualizar quando idioma mudar
-        IdiomaService.OnChange += StateHasChanged;
+        // 1. Configura a notificação para o modal
+        notificacaoSelecionada = n;
+        mostrarModal = true;
+    
+        // 2. Marcar como lido para a bolinha diminuir
+        if (!State.IdsLidos.Contains(n.Id))
+        {
+            State.IdsLidos.Add(n.Id);
+        
+            var apenasNovas = listaNotificacoes
+                .Where(notif => !State.IdsLidos.Contains(notif.Id))
+                .ToList();
+            
+            State.SetContador(apenasNovas.Count);
+            StateHasChanged();
+        }
     }
-}
 
+    private async Task LimparTudo()
+    {
+        if (listaNotificacoes != null)
+        {
+            // Adiciona todos os IDs que estão na tela agora para a lista de "vistos"
+            foreach (var n in listaNotificacoes)
+            {
+                if (!State.IdsLidos.Contains(n.Id))
+                    State.IdsLidos.Add(n.Id);
+            }
 
+            // Zera o contador da bolinha
+            State.Zerar();
 
+            // Opcional: Avisar o banco
+            await Http.PostAsync($"api/notificacoes/ler-todas/{Sessao.IdUsuario}", null);
+        
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        IdiomaService.OnChange -= StateHasChanged;
+    }
 }

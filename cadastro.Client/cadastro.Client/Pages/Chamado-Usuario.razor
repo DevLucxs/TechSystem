@@ -3,124 +3,297 @@
 @inject HttpClient Http
 @inject cadastro.Client.Services.IaServiceClient IaServiceClient
 @layout Shared.TelaUsuario
-@using cadastro.Shared;
-@using cadastro.Client.Models
-@inject cadastro.Client.Services.IdiomaService IdiomaService
+@using cadastro.Shared.Models
 @inject cadastro.Client.Services.SessaoService Sessao
+@inject NotificacaoState State
 
-
-<link rel="stylesheet" href="css/chamado.css" />
-
-<EditForm Model="@chamado" OnValidSubmit="AbrirChamado">
-    <div class="main-container">
-        <div class="card-chamado">
-            <h1>
-                <img src="assets/headphone icon.png" alt="Abrir Chamado" />
-                ABRIR CHAMADO
-            </h1>
-
-            <!-- sem <form> aqui -->
-            <div class="abrir-chamado-campo">
-                <label>* Título:</label>
-                <InputText @bind-Value="chamado.Titulo" />
-            </div>
-
-            <div class="abrir-chamado-campo">
-                <label>* Descrição:</label>
-                <InputTextArea @bind-Value="chamado.Descricao" />
-            </div>
-
-            <div class="abrir-chamado-campo">
-                <label>Sugestão da IA:</label>
-                <textarea readonly>@sugestaoIA</textarea>
-                <button type="button" @onclick="GerarSugestao">Gerar Sugestão</button>
-
-
-
-            </div>
-
-            <div class="abrir-chamado-campo">
-                <label>* Prioridade:</label>
-                <InputSelect @bind-Value="chamado.Prioridade" class="priority-select">
-                    <option value="">Selecione</option>
-                    <option value="Alta">Alta</option>
-                    <option value="Média">Média</option>
-                    <option value="Baixa">Baixa</option>
-                </InputSelect>
-            </div>
-
-            <div class="abrir-chamado-campo">
-                <label>Arquivo (Opcional):</label>
-                <InputFile OnChange="HandleFileUpload" />
-            </div>
-
-            <div class="buttons">
-                <button type="submit" class="enviar">
-                    <img src="assets/confirm.png" /> Abrir Chamado
-                </button>
-
-                <button type="button" class="cancelar" @onclick="Cancelar">
-                    <img src="assets/cancel.png" /> Cancelar
-                </button>
-            </div>
+<div class="master-container">
+    <div class="glass-card">
+        
+        @* Header com indicador de progresso sutil *@
+        <div class="form-header">
+            <div class="brand-pill">Suporte Técnico</div>
+            <h1>Como podemos ajudar?</h1>
+            <p>Preencha os dados e nossa IA iniciará o diagnóstico.</p>
         </div>
+
+        <EditForm Model="@chamado" OnValidSubmit="AbrirChamado">
+            <div class="modern-form-stack">
+                
+                @* Campo de Título Slim *@
+                <div class="field-group">
+                    <label>Título do Chamado</label>
+                    <InputText @bind-Value="chamado.Titulo" placeholder="Ex: Erro ao carregar dashboard" class="minimal-input" />
+                </div>
+
+                @* Campo de Descrição *@
+                <div class="field-group">
+                    <label>Descrição</label>
+                    <InputTextArea @bind-Value="chamado.Descricao" placeholder="Descreva o que aconteceu em detalhes..." class="minimal-input textarea" />
+                </div>
+
+                @* IA Section - Inteligente e Adaptativa *@
+                <div class="ia-ai-container">
+                    @if (string.IsNullOrEmpty(sugestaoIA))
+                    {
+                        <div class="ia-placeholder" @onclick="GerarSugestao">
+                            <span class="magic-icon">✨</span>
+                            <span>Clique para gerar uma sugestão inteligente</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="ia-response-box">
+                            <div class="ia-label">
+                                <span class="pulse-dot"></span> Sugestão da IA
+                            </div>
+                            <div class="ia-text">@sugestaoIA</div>
+                        </div>
+                    }
+                </div>
+
+                @* Row de Configurações *@
+                <div class="config-row">
+                    <div class="field-group">
+                        <label>Prioridade</label>
+                        <InputSelect @bind-Value="chamado.Prioridade" class="minimal-input select">
+                            <option value="">Selecione</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Média">Média</option>
+                            <option value="Baixa">Baixa</option>
+                        </InputSelect>
+                    </div>
+                    <div class="field-group">
+                        <label>Anexo</label>
+                        <div class="custom-file-upload">
+                            <InputFile OnChange="HandleFileUpload" />
+                        </div>
+                    </div>
+                </div>
+
+                @* Footer de Ações - Sempre visível *@
+                <div class="form-footer">
+                    <button type="button" @onclick="Cancelar" class="btn-ghost">Cancelar</button>
+                    <button type="submit" class="btn-submit" disabled="@processando">
+                        @if (processando) {
+                            <span>Enviando...</span>
+                        } else {
+                            <span>Criar Chamado</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </EditForm>
     </div>
-</EditForm>
+</div>
+
+<style>
+    /* Reset & Base */
+    .master-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px 20px;
+        background-color: #fcfcfc;
+        min-height: 100vh;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Card Glassmorphism Suave */
+    .glass-card {
+        width: 100%;
+        max-width: 620px;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 24px;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    }
+
+    /* Header Refinado */
+    .form-header { text-align: center; margin-bottom: 35px; }
+    
+    .brand-pill {
+        display: inline-block;
+        padding: 4px 12px;
+        background: #e0f2fe;
+        color: #0369a1;
+        font-size: 0.7rem;
+        font-weight: 800;
+        border-radius: 100px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 15px;
+    }
+
+    .form-header h1 { font-size: 1.75rem; font-weight: 850; color: #1e293b; margin: 0; letter-spacing: -0.02em; }
+    .form-header p { color: #64748b; font-size: 0.95rem; margin-top: 8px; }
+
+    /* Stack de Campos */
+    .modern-form-stack { display: flex; flex-direction: column; gap: 20px; }
+    .field-group { display: flex; flex-direction: column; gap: 8px; }
+    .field-group label { font-size: 0.8rem; font-weight: 600; color: #475569; }
+
+    /* Inputs Minimalistas */
+    .minimal-input {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        color: #1e293b;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .minimal-input:focus {
+        outline: none;
+        border-color: #05a6de;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(5, 166, 222, 0.1);
+    }
+
+    .textarea { min-height: 110px; resize: none; line-height: 1.6; }
+
+    /* IA Box - O Toque Moderno */
+    .ia-ai-container { margin-top: 5px; }
+
+    .ia-placeholder {
+        padding: 15px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .ia-placeholder:hover { border-color: #05a6de; color: #05a6de; background: #f0f9ff; }
+
+    .ia-response-box {
+        background: #f0f9ff;
+        border-radius: 14px;
+        padding: 18px;
+        border-left: 4px solid #05a6de;
+        animation: slideIn 0.3s ease;
+    }
+
+    .ia-label {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #05a6de;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .pulse-dot {
+        width: 6px;
+        height: 6px;
+        background: #05a6de;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+
+    .ia-text { font-size: 0.9rem; color: #334155; line-height: 1.5; font-style: italic; }
+
+    /* Row de Configurações */
+    .config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* Botões */
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 15px;
+        padding-top: 25px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .btn-submit {
+        background: #0f172a;
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-submit:hover { background: #000; transform: translateY(-1px); }
+
+    .btn-ghost {
+        background: transparent;
+        color: #64748b;
+        border: none;
+        padding: 14px 24px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-ghost:hover { color: #1e293b; }
+
+    /* Keyframes */
+    @@keyframes slideIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @@keyframes pulse {
+        0% { opacity: 0.4; }
+        50% { opacity: 1; }
+        100% { opacity: 0.4; }
+    }
+</style>
 
 @code {
-    ChamadoForm chamado = new();
-    IBrowserFile arquivo;
+    private bool processando = false;
+
+    Chamado chamado = new();
     string sugestaoIA = "";
+    IBrowserFile arquivo;
 
-    async Task GerarSugestao()
-    {
-        var request = new SugestaoRequest
-        {
-            Titulo = chamado.Titulo,
-            Descricao = chamado.Descricao
-        };
-
-        sugestaoIA = await IaServiceClient.GerarSugestao(chamado.Titulo, chamado.Descricao);
+    async Task GerarSugestao() {
+        if (!string.IsNullOrWhiteSpace(chamado.Descricao))
+            sugestaoIA = await IaServiceClient.GerarSugestao(chamado.Titulo, chamado.Descricao);
     }
 
-
-    public class SugestaoResponse
+  async Task AbrirChamado() 
     {
-        public string Sugestao { get; set; } = string.Empty;
-    }
+        if (processando) return;
+        processando = true;
 
-
-    async Task AbrirChamado()
-    {
-        chamado.Categoria = "Rede"; // se existir no model
-        chamado.DataCriacao = DateTime.Now;
-        chamado.Status = "Aberto";
-        chamado.UsuarioId = Sessao.IdUsuario; // 🔑 precisa existir
-
-        var response = await Http.PostAsJsonAsync("api/chamado", chamado);
-        if (response.IsSuccessStatusCode)
+        try 
         {
-            Navigation.NavigateTo("/usuario");
+            chamado.UsuarioId = Sessao.IdUsuario;
+            
+            var res = await Http.PostAsJsonAsync("api/chamado", chamado);
+            
+            if (res.IsSuccessStatusCode) 
+            {
+                // DISPARA A BOLINHA NO SINO IMEDIATAMENTE
+                State.NovoAlerta(); 
+
+                // Redireciona para a home ou lista
+                Navigation.NavigateTo("/usuario");
+            }
         }
-        else
+        catch (Exception ex) 
         {
-            var erro = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Erro ao abrir chamado: {erro}");
+            Console.WriteLine($"Erro: {ex.Message}");
+        }
+        finally 
+        {
+            processando = false;
         }
     }
 
-
-
-
-    async Task HandleFileUpload(InputFileChangeEventArgs e)
-    {
-        arquivo = e.File;
-    }
-
-    void Cancelar() 
-    { 
-        Navigation.NavigateTo("/chamado"); 
-    }
-
+    async Task HandleFileUpload(InputFileChangeEventArgs e) => arquivo = e.File;
+    void Cancelar() => Navigation.NavigateTo("/usuario");
 }
-

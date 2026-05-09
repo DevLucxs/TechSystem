@@ -1,59 +1,108 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@implements IDisposable
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/global.css" />
 
+<div class="app-wrapper">
+    <header class="top-header">
+        <div class="header-content">
+            <div class="header-logo-section" @onclick="IrParaHome" style="cursor: pointer;">
+                <img src="assets/symbol.png" alt="Logo" class="main-app-logo" />
+                <div class="logo-divider"></div>
+                <span class="app-brand-name">TECH<strong>SYSTEM</strong></span>
+            </div>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter&family=Roboto&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/home.css" />
-
-<div class="menu">
-    <div class="menu-frame">
-        <div class="menu-menu">
-            <header class="header">
-                <div class="header-logo-left">
-                    <div class="header-barra"></div>
-                    <img src="assets/_163d66ba-473a-40af.png" class="header-logo" />
+            <div class="header-profile-section" @onclick="IrParaConfiguracao">
+                <div class="profile-text">
+                    <span class="user-name">Admin</span>
+                    <span class="user-role">Analista de Suporte</span>
                 </div>
-
-                <div class="header-profile-right">
-                    <p class="header-text-desenvolvedor">Analista de Suporte</p>
-                    <p class="header-text-lucas">Lucas</p>
-                    <img src="assets/Profile.png" class="header-profile-img" />
-                </div>
-            </header>
-
-            <div class="menu-row">
-                <div class="card-barra-lateral">
-                    <button class="barra-btn" @onclick="IrParaHome">
-                        <img src="assets/home.png" alt="Home" />
-                    </button>
-                    <button class="barra-btn" @onclick="IrParaRelatorio">
-                        <img src="assets/docs icon.png" alt="Documentos" />
-                    </button>
-                    <button class="barra-btn" @onclick="IrParaNotificacao">
-                        <img src="assets/Notificacao icon.png" alt="Notificações" />
-                    </button>
-                    <button class="barra-btn" @onclick="IrParaConfiguracao">
-                        <img src="assets/config icon.png" alt="Configurações" />
-                    </button>
-                    <button class="barra-btn card-barra-lateral-exit-icon" @onclick="Sair">
-                        <img src="assets/exit.png" alt="Sair" />
-                    </button>
+                <div class="avatar-wrapper">
+                    <img src="assets/Profile.png" alt="Profile" class="profile-avatar" />
+                    <div class="status-indicator online"></div>
                 </div>
             </div>
         </div>
+    </header>
 
-        <div class="menu-group">
+    <div class="main-body">
+        <aside class="sidebar-admin">
+            <nav class="nav-menu" style="display: flex; flex-direction: column; align-items: center;">
+        
+                <div class="nav-item" title="Home">
+                    <button class="nav-btn" @onclick="IrParaHome">
+                        <img src="assets/home.png" />
+                    </button>
+                </div>
+
+                <div class="nav-item" title="Documentos">
+                    <button class="nav-btn" @onclick="IrParaRelatorio">
+                        <img src="assets/docs icon.png" />
+                    </button>
+                </div>
+
+                <div class="nav-item">
+                    <button class="nav-btn" @onclick="IrParaNotificacao">
+                        <img src="assets/Notificacao icon.png"
+                             style="@(State.Contador > 0 ? "filter: drop-shadow(0 0 5px var(--blue-accent));" : "")" />
+        
+                        @if (State.Contador > 0)
+                        {
+                            <span class="badge-alerta">@State.Contador</span>
+                        }
+                    </button>
+                </div>
+
+                <div class="nav-item" title="Configurações">
+                    <button class="nav-btn" @onclick="IrParaConfiguracao">
+                        <img src="assets/config icon.png" />
+                    </button>
+                </div>
+            </nav>
+
+            <div class="nav-item logout" title="Sair" style="margin-bottom: 20px;">
+                <button class="nav-btn" @onclick="Sair">
+                    <img src="assets/exit.png" />
+                </button>
+            </div>
+        </aside>
+
+        <main class="page-container">
             @Body
-        </div>
+        </main>
     </div>
+
 </div>
 
 @code {
+    // A injeção está correta
+    [Inject] public NotificacaoState State { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Inscreve o evento: Quando o State mudar, o Layout atualiza o HTML
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        // CORREÇÃO: Use o mesmo objeto do OnInitialized para evitar erros
+        State.OnChange -= StateHasChanged;
+    }
+
+    // Métodos de navegação
     void IrParaHome() => Navigation.NavigateTo("/inicial");
-    void IrParaChamado() => Navigation.NavigateTo("/chamado");
     void IrParaRelatorio() => Navigation.NavigateTo("/relatorios");
-    void IrParaNotificacao() => Navigation.NavigateTo("/notificacoes");
+    
+    void IrParaNotificacao()
+    {
+        // Opcional: Se quiser que a bolinha suma assim que clicar no sino
+        // State.Zerar();
+        Navigation.NavigateTo("/notificacoes");
+    }
+    
     void IrParaConfiguracao() => Navigation.NavigateTo("/configuracoes");
     void Sair() => Navigation.NavigateTo("/");
 }

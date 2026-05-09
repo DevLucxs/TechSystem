@@ -1,107 +1,242 @@
 ﻿@page "/configuracoes"
 @layout Shared.TechSystemLayout
 @inject HttpClient Http
+@inject NavigationManager Navigation
 @inject cadastro.Client.Services.IdiomaService IdiomaService
 
-<link rel="stylesheet" href="css/configuracao.css" />
+<div class="config-master-wrapper">
+    <div class="config-premium-card">
+        
+        @* Header com a animação de flutuar que você curtiu *@
+        <div class="config-premium-header">
+            <div class="header-icon-container">
+                <img src="assets/config icon.png" alt="Configurações" class="custom-config-icon" />
+            </div>
+            <h1>@textos[idiomaSelecionado]["Titulo"]</h1>
+            <p>Painel de Controle Administrativo</p>
+        </div>
 
-<div class="config-container">
-    <h1 class="config-titulo">@textos[idiomaSelecionado]["Titulo"]</h1>
+        <div class="config-premium-content">
+            
+            @* Card de Idioma *@
+            <div class="config-item-card">
+                <div class="config-item-info">
+                    <label>@textos[idiomaSelecionado]["Idioma"]</label>
+                    <span>Linguagem padrão do painel</span>
+                </div>
+                <div class="select-modern-wrapper">
+                    <select @bind="idiomaSelecionado">
+                        <option value="PORTUGUÊS">🇧🇷 Português</option>
+                        <option value="ENGLISH">🇺🇸 English</option>
+                        <option value="ESPAÑOL">🇪🇸 Español</option>
+                    </select>
+                </div>
+            </div>
 
-    <div class="config-item">
-        <label class="config-label">@textos[idiomaSelecionado]["Idioma"]</label>
-        <select class="config-select" @bind="idiomaSelecionado" @bind:event="oninput">
-            <option>PORTUGUÊS</option>
-            <option>ENGLISH</option>
-            <option>ESPAÑOL</option>
-        </select>
-    </div>
+            @* Card de Notificações com o Switch iOS *@
+            <div class="config-item-card">
+                <div class="config-item-info">
+                    <label>@textos[idiomaSelecionado]["Notificacoes"]</label>
+                    <span>Alertas globais de sistema</span>
+                </div>
+                <label class="modern-switch">
+                    <input type="checkbox" checked="@(notificacoesAtivas == "LIGADO")" 
+                           @onchange="@(e => AlternarNotificacoes((bool)e.Value))">
+                    <span class="modern-slider"></span>
+                </label>
+            </div>
 
-    <div class="config-item">
-        <label class="config-label">@textos[idiomaSelecionado]["Notificacoes"]</label>
-        <select class="config-select" @bind="notificacoesAtivas" @bind:event="oninput">
-            <option>LIGADO</option>
-            <option>DESLIGADO</option>
-        </select>
-    </div>
+            @* Card de Informações (Somente leitura) *@
+            <div class="config-item-card info-card">
+                <div class="config-item-info">
+                    <label>@textos[idiomaSelecionado]["Versao"]</label>
+                    <span>Sistema atualizado e seguro</span>
+                </div>
+                <span class="version-badge">v2.0.0</span>
+            </div>
 
-    <div class="config-item">
-        <label class="config-label">@textos[idiomaSelecionado]["Versao"]</label>
-        <span class="config-valor">1.0.0</span>
-    </div>
-
-    <div class="config-item">
-        <button class="config-sair" @onclick="Logout">@textos[idiomaSelecionado]["Sair"]</button>
+            @* Footer com Botão de Logout Estilizado *@
+            <div class="config-premium-footer">
+                <button class="btn-logout-premium" @onclick="Logout">
+                    <i class="oi oi-account-logout"></i> @textos[idiomaSelecionado]["Sair"]
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
+<style>
+    /* Wrapper para centralizar e dar profundidade */
+    .config-master-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 85vh;
+        padding: 40px 20px;
+        background: #f8fafc;
+    }
+
+    .config-premium-card {
+        width: 100%;
+        max-width: 550px;
+        background: #ffffff;
+        border-radius: 32px;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+        overflow: hidden;
+        animation: fadeInScale 0.5s ease-out;
+    }
+
+    .config-premium-header {
+        padding: 50px 30px 30px;
+        text-align: center;
+        background: linear-gradient(to bottom, #ffffff, #f8fafc);
+    }
+
+    /* Reaproveitando sua animação de flutuar */
+    .header-icon-container {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .custom-config-icon { max-width: 100%; object-fit: contain; }
+
+    .config-premium-header h1 { font-size: 1.8rem; font-weight: 900; color: #1e293b; margin: 0; letter-spacing: -1px; }
+    .config-premium-header p { color: #94a3b8; font-size: 0.9rem; margin-top: 5px; }
+
+    .config-premium-content { padding: 0 40px 40px; }
+
+    /* Estética de Cards Individuais para cada item */
+    .config-item-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 20px;
+        margin-bottom: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .config-item-card:hover {
+        transform: translateX(5px);
+        border-color: #05a6de;
+        background: #f0f9ff;
+    }
+
+    .config-item-info label { display: block; font-weight: 800; color: #334155; font-size: 0.95rem; }
+    .config-item-info span { font-size: 0.8rem; color: #94a3b8; }
+
+    /* Estilo do Select */
+    .select-modern-wrapper select {
+        padding: 10px 15px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        font-weight: 700;
+        color: #334155;
+        outline: none;
+        cursor: pointer;
+    }
+
+    /* Switch iOS Style */
+    .modern-switch { position: relative; width: 52px; height: 28px; }
+    .modern-switch input { opacity: 0; width: 0; height: 0; }
+    .modern-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
+    .modern-slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .modern-slider { background-color: #00d285; }
+    input:checked + .modern-slider:before { transform: translateX(24px); }
+
+    .version-badge { font-family: monospace; font-weight: 800; color: #64748b; background: #f1f5f9; padding: 4px 12px; border-radius: 8px; }
+
+    /* Botão Sair Premium */
+    .config-premium-footer { margin-top: 30px; }
+    .btn-logout-premium {
+        width: 100%;
+        padding: 16px;
+        border: 2px solid #fee2e2;
+        background: #fff;
+        color: #ef4444;
+        border-radius: 18px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-logout-premium:hover { background: #ef4444; color: #fff; border-color: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2); }
+
+    @@keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @@keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+</style>
+
+
 @code {
+    private string _idiomaSelecionado = "PORTUGUÊS";
     private string idiomaSelecionado
     {
         get => _idiomaSelecionado;
         set
         {
-            _idiomaSelecionado = value;
-            IdiomaService.MudarIdioma(_idiomaSelecionado); // atualiza globalmente
-            SalvarConfiguracoes();
+            if (_idiomaSelecionado != value)
+            {
+                _idiomaSelecionado = value;
+                IdiomaService.MudarIdioma(_idiomaSelecionado);
+                _ = SalvarConfiguracoes();
+            }
         }
     }
-    private string _idiomaSelecionado = "PORTUGUÊS";
 
+    private string _notificacoesAtivas = "LIGADO";
     private string notificacoesAtivas
     {
         get => _notificacoesAtivas;
         set
         {
-            _notificacoesAtivas = value;
-            SalvarConfiguracoes();
+            if (_notificacoesAtivas != value)
+            {
+                _notificacoesAtivas = value;
+                _ = SalvarConfiguracoes();
+            }
         }
     }
-    private string _notificacoesAtivas = "LIGADO";
+
+    private void AlternarNotificacoes(bool valor)
+    {
+        notificacoesAtivas = valor ? "LIGADO" : "DESLIGADO";
+    }
 
     private Dictionary<string, Dictionary<string, string>> textos = new()
     {
-        ["PORTUGUÊS"] = new()
-        {
-            ["Titulo"] = "CONFIGURAÇÃO",
-            ["Idioma"] = "Idioma",
-            ["Notificacoes"] = "Notificações",
-            ["Versao"] = "Versão",
-            ["Sair"] = "Sair"
-        },
-        ["ENGLISH"] = new()
-        {
-            ["Titulo"] = "SETTINGS",
-            ["Idioma"] = "Language",
-            ["Notificacoes"] = "Notifications",
-            ["Versao"] = "Version",
-            ["Sair"] = "Logout"
-        },
-        ["ESPAÑOL"] = new()
-        {
-            ["Titulo"] = "CONFIGURACIÓN",
-            ["Idioma"] = "Idioma",
-            ["Notificacoes"] = "Notificaciones",
-            ["Versao"] = "Versión",
-            ["Sair"] = "Salir"
-        }
+        ["PORTUGUÊS"] = new() { ["Titulo"] = "CONFIGURAÇÃO", ["Idioma"] = "Idioma", ["Notificacoes"] = "Notificações", ["Versao"] = "Versão", ["Sair"] = "Encerrar Sessão" },
+        ["ENGLISH"] = new() { ["Titulo"] = "SETTINGS", ["Idioma"] = "Language", ["Notificacoes"] = "Notifications", ["Versao"] = "Version", ["Sair"] = "Logout" },
+        ["ESPAÑOL"] = new() { ["Titulo"] = "CONFIGURACIÓN", ["Idioma"] = "Idioma", ["Notificacoes"] = "Notificaciones", ["Versao"] = "Versión", ["Sair"] = "Salir" }
     };
 
     private async Task SalvarConfiguracoes()
     {
-        var config = new
+        try
         {
-            Idioma = idiomaSelecionado,
-            Notificacoes = notificacoesAtivas
-        };
-
-        await Http.PostAsJsonAsync("https://localhost:7002/api/configuracoes", config);
+            var config = new { Idioma = idiomaSelecionado, Notificacoes = notificacoesAtivas };
+            await Http.PostAsJsonAsync("https://localhost:7002/api/configuracoes", config);
+        }
+        catch (Exception ex) { Console.WriteLine("Erro ao salvar: " + ex.Message); }
     }
 
-
-    private void Logout()
-    {
-        // Aqui você pode redirecionar para a tela de login ou limpar sessão
-        Console.WriteLine("Usuário saiu.");
-    }
+    private void Logout() => Navigation.NavigateTo("/");
 }

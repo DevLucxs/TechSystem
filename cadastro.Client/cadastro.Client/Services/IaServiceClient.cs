@@ -14,26 +14,36 @@ namespace cadastro.Client.Services
 
         public async Task<string> GerarSugestao(string titulo, string descricao)
         {
-            // O Cliente HTTP não precisa da chave de IA, pois ele só chama sua API.
-            var request = new SugestaoRequest
+            try
             {
-                Titulo = titulo,
-                Descricao = descricao
-            };
+                var request = new SugestaoRequest
+                {
+                    Titulo = titulo,
+                    Descricao = descricao
+                };
 
-            // Chamada HTTP para o endpoint da sua própria API
-            var response = await _http.PostAsJsonAsync("api/chamado/sugestao", request);
+                var response = await _http.PostAsJsonAsync("api/chamado/sugestao", request);
 
-            if (response.IsSuccessStatusCode)
-            {
-                // Note: O retorno do Controller da API é um objeto { sugestao: "..." }
-                var result = await response.Content.ReadFromJsonAsync<SugestaoResponse>();
-                return result?.Sugestao ?? "Não foi possível gerar sugestão.";
-            }
-            else
-            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<SugestaoResponse>();
+                    return result?.Sugestao ?? "IA: Não foi possível gerar uma sugestão agora.";
+                }
+
+                // Tratamento amigável para instabilidades do Gemini (Erro 503 ou 429)
+                if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+                {
+                    return "A IA está com alta demanda no momento. Tente novamente em instantes!";
+                }
+
                 var erro = await response.Content.ReadAsStringAsync();
-                return $"Erro da API: {erro}";
+                return "IA: No momento não consegui analisar seu chamado.";
+            }
+            catch (Exception ex)
+            {
+                // Log interno para você debugar, mas mensagem amigável para o usuário
+                Console.WriteLine($"Erro de conexão com a API: {ex.Message}");
+                return "IA: Verifique sua conexão com o servidor.";
             }
         }
     }

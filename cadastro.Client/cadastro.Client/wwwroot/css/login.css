@@ -281,3 +281,104 @@
 		max-width: 200px;
 	}
 }
+
+
+/* Container que trava a tela */
+.modal-overlay {
+	position: fixed !important; /* Força ficar preso na tela */
+	top: 0 !important;
+	left: 0 !important;
+	width: 100vw !important;
+	height: 100vh !important;
+	background: rgba(10, 15, 25, 0.9); /* Tom marinho bem escuro */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 99999; /* Acima de TUDO */
+	backdrop-filter: blur(12px);
+	animation: fadeInModal 0.3s ease;
+}
+
+/* O card do modal */
+.modal-content.glass-card {
+	background: rgba(0, 0, 0, 0.45) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	border-radius: 28px !important;
+	padding: 40px !important;
+	max-width: 450px;
+	width: 90%;
+	text-align: center;
+	box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6) !important;
+	/* Reseta os valores vindo do .login-card antigo */
+	position: relative !important;
+	left: 0 !important;
+	top: 0 !important;
+	margin: 0 !important;
+}
+
+.modal-content h3 {
+	color: #06a6df;
+	font-weight: 800;
+	font-size: 1.8rem;
+	margin-bottom: 15px;
+}
+
+.modal-content p {
+	color: #cbd5e1;
+	line-height: 1.6;
+}
+
+/* Animações */
+@keyframes fadeInModal {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes bounceIn {
+	from {
+		transform: scale(0.9);
+		opacity: 0;
+	}
+
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+/* Container do ícone */
+.icon-success {
+	display: flex;
+	margin-left: 130px;
+	align-items: flex-start;
+	margin-bottom: 20px;
+	width: 100%;
+}
+
+/* A logo animada dentro do modal */
+.modal-symbol-animated {
+	width: 70px;
+	height: auto;
+	/* Efeito de brilho azul (glow) */
+	filter: drop-shadow(0 0 12px rgba(6, 166, 223, 0.7));
+	animation: successBounce 2s infinite ease-in-out;
+	filter: drop-shadow(0 0 15px #34d399) hue-rotate(90deg);
+}
+
+/* Animação suave de flutuação */
+@keyframes successBounce {
+	0%, 100% {
+		transform: translateY(0) scale(1);
+		filter: drop-shadow(0 0 12px rgba(6, 166, 223, 0.5));
+	}
+
+	50% {
+		transform: translateY(-10px) scale(1.05);
+		filter: drop-shadow(0 0 25px rgba(6, 166, 223, 0.9));
+	}
+}

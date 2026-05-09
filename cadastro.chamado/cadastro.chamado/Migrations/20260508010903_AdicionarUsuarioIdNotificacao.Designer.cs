@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using cadastro.chamado.database;
 
@@ -11,9 +12,11 @@ using cadastro.chamado.database;
 namespace cadastro.chamado.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260508010903_AdicionarUsuarioIdNotificacao")]
+    partial class AdicionarUsuarioIdNotificacao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,48 +24,6 @@ namespace cadastro.chamado.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("cadastro.Shared.Models.Chamado", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Previsao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Prioridade")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Responsavel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SugestaoIA")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Chamados");
-                });
 
             modelBuilder.Entity("cadastro.Shared.Models.Notificacao", b =>
                 {
@@ -78,9 +39,6 @@ namespace cadastro.chamado.Migrations
                     b.Property<string>("Icone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Lida")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Mensagem")
                         .IsRequired()
@@ -131,7 +89,61 @@ namespace cadastro.chamado.Migrations
                     b.ToTable("Relatorios");
                 });
 
-            modelBuilder.Entity("cadastro.Shared.Models.Usuario", b =>
+            modelBuilder.Entity("cadastro.chamado.models.Chamado", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Equipe")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Previsao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Prioridade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Responsavel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SugestaoIA")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Chamados");
+                });
+
+            modelBuilder.Entity("cadastro.chamado.models.Usuario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -166,7 +178,7 @@ namespace cadastro.chamado.Migrations
                             Email = "admin@techsystem.com",
                             Nome = "Administrador",
                             Role = "Admin",
-                            SenhaHash = "$2a$11$UYQYkfwiPlrV.YXDECFXYue/csSBIqfxwUaToxLhc0AAoj.7WgIty"
+                            SenhaHash = "$2a$11$vgDW0ZJE0j7mm0gckQozdO9Su6aW4ouNwWOASvtemjCRUVN7VMMcO"
                         },
                         new
                         {
@@ -174,7 +186,7 @@ namespace cadastro.chamado.Migrations
                             Email = "usuario@techsystem.com",
                             Nome = "Usuário Comum",
                             Role = "Usuario",
-                            SenhaHash = "$2a$11$L3MVNQYCOJXCHYITqnf8S.vHIpf1xuEe1iwfWODWqjjO9nbABqv1G"
+                            SenhaHash = "$2a$11$hqYdF1kQtnffWGscFdo61.SO9KqHsdTXpXctY8TF/nzwCufdBNY.W"
                         });
                 });
 #pragma warning restore 612, 618

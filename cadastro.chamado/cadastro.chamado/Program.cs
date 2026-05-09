@@ -2,8 +2,6 @@
 using cadastro.chamado.Services;
 using cadastro.Shared;
 using DotNetEnv;
-using Google.Apis.Aiplatform.v1;
-using Google.Apis.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -23,25 +21,34 @@ namespace cadastro.chamado
 
             Env.Load(Path.Combine(basePath, ".env"));
 
-            var testKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var testKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
             Console.WriteLine($"✅ TESTE OPENAI KEY: {testKey}");
 
             var builder = WebApplication.CreateBuilder(args);
-            var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var apiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
 
             // Serviços
             builder.Services.AddRazorPages();
             builder.Services.AddControllers();
 
             // DbContext
+
+            // 1. Pegue a string de conexão da variável de ambiente definida no seu .env
+            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
+            // 2. Verifique se ela foi carregada (ajuda no debug)
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new Exception("❌ A string de conexão 'DB_CONNECTION_STRING' não foi encontrada no arquivo .env.");
+            }
+
+            // 3. Configure o DbContext usando a variável
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(connectionString));
 
             // IaService
             builder.Services.AddHttpClient<IaService>();
             builder.Services.AddScoped<IaService>();
-
-
 
             // Swagger
             builder.Services.AddEndpointsApiExplorer();

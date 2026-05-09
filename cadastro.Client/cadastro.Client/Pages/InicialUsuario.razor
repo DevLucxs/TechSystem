@@ -1,7 +1,7 @@
 ﻿@page "/usuario"
 @inject NavigationManager Navigation
 @layout Shared.TelaUsuario
-@using cadastro.Client.Models
+@using cadastro.Shared.Models
 @inject HttpClient Http
 @inject cadastro.Client.Services.SessaoService Sessao
 
@@ -9,84 +9,112 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/usuario.css" />
+    <link rel="stylesheet" href="css/global.css" />
 </head>
 
 <body>
-    <div class="menu">
-        <div class="menu-frame">
-            <div class="menu-menu">
-
-                <!-- Cards de status -->
-                <div class="menu-row">
-                    <div class="menu-botton-em1">
-                        <img src="assets/sino.png" class="menu-img1" />
-                        <div class="card1">
-                            <p class="text">EM ABERTO</p>
-                            <h2 class="card-subtitle1 subtitle">@emAberto</h2>
-                        </div>
-                    </div>
-
-                    <div class="menu-botton-em2">
-                        <img src="assets/alert.png" class="menu-img2" />
-                        <div class="card2">
-                            <p class="text">EM ANDAMENTO</p>
-                            <h2 class="card-subtitle2 subtitle">@emAndamento</h2>
-                        </div>
-                    </div>
-
-                    <div class="menu-botton">
-                        <img src="assets/confirm.png" class="menu-img3" />
-                        <div class="menu-finalizadas text">FINALIZADAS</div>
-                        <h2 class="menu-subtitle subtitle">@finalizados</h2>
-                    </div>
-                </div>
+    <div class="dashboard-cards">
+        <div class="card-box aberto">
+            <img src="assets/sino.png" />
+            <div>
+                <p>EM ABERTO</p>
+                <h2>@emAberto</h2>
             </div>
-
-            <!-- Tabela de chamados do usuário -->
-            <div class="menu-group">
-                <div class="menu-tabela">
-                    <div class="menu-col">
-                        <div class="menu-titulos">
-                            <div>ID</div>
-                            <div>Chamados</div>
-                            <div>Data de Abertura</div>
-                            <div>Prioridade</div>
-                            <div>Status</div>
-                            <div>Previsão</div>
-                        </div>
-
-                        @foreach (var chamado in chamados)
-                        {
-                            <div class="linha">
-                                <div>@chamado.Id</div>
-                                <div>@chamado.Titulo</div>
-                                <div>@chamado.DataCriacao.ToString("dd/MM/yyyy HH:mm")</div>
-                                <div>
-                                    <button class="btn" style="background-color:@GetCorPrioridade(chamado.Prioridade)">
-                                        @chamado.Prioridade.Substring(0, 1)
-                                    </button>
-                                </div>
-                                <div style="color:@GetCorStatus(chamado.Status)">
-                                    @(string.IsNullOrWhiteSpace(chamado.Status) ? "-" : chamado.Status)
-                                </div>
-                                <div>
-                                    @(chamado.Previsao.HasValue
-                                                                    ? chamado.Previsao.Value.ToString("dd/MM/yyyy HH:mm")
-                                                                    : "-")
-
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
+        </div>
+        <div class="card-box andamento">
+            <img src="assets/alert.png" />
+            <div>
+                <p>EM ANDAMENTO</p>
+                <h2>@emAndamento</h2>
+            </div>
+        </div>
+        <div class="card-box finalizado">
+            <img src="assets/confirm1.png" />
+            <div>
+                <p>FINALIZADOS</p>
+                <h2>@finalizados</h2>
             </div>
         </div>
     </div>
+
+    <div class="table-white-box">
+        <div class="grid-table-row header-row">
+            <div>ID</div>
+            <div class="col-titulo">CHAMADO</div>
+            <div>DATA</div>
+            <div>NÍVEL</div>
+            <div>STATUS</div>
+            <div style="color: var(--accent-admin);">PREVISÃO</div> <div>RESPONSÁVEL</div>
+        </div>
+
+        @foreach (var c in chamados)
+        {
+            <div class="grid-table-row">
+                <div style="font-weight: bold; color: #888;">#@c.Id</div>
+                <div class="col-titulo" style="font-weight: 600;">@c.Titulo</div>
+                <div>@c.DataCriacao.ToShortDateString()</div>
+            
+                <div>
+                    <span class="badge" style="background-color:@GetCorPrioridade(c.Prioridade); color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.7rem;">
+                        @c.Prioridade
+                    </span>
+                </div>
+
+                <div style="color:@GetCorStatus(c.Status); font-weight: 800;">@c.Status.ToUpper()</div>
+
+                <div style="font-weight: 600; color: #05a6de;">
+                    @(c.Previsao.HasValue ? c.Previsao.Value.ToString("dd/MM/yyyy") : "A definir")
+                </div>
+
+                <div style="font-weight: 600; color: #2d3436;">
+                    @(string.IsNullOrEmpty(c.Responsavel) ? "Pendente" : c.Responsavel)
+                </div>
+            </div>
+        }
+    </div>
+
 </body>
 
+<style> 
+
+
+    .grid-table-row {
+        display: grid;
+        /* ID, Chamado (espaçoso), Data, Nível, Status, Previsão, Responsável */
+        grid-template-columns: 0.5fr 2fr 1fr 0.8fr 1fr 1fr 1.2fr;
+        gap: 10px;
+        padding: 15px 25px;
+        align-items: center;
+        width: 100%;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+        /* Garante que o texto não quebre linha de forma feia */
+        .grid-table-row div {
+            white-space: nowrap;
+            font-size: 0.85rem;
+        }
+
+    /* Caso queira que o Título do Chamado continue alinhado à esquerda (como é comum em listas) */
+    .col-titulo {
+        justify-content: flex-start !important;
+        text-align: left !important;
+        padding-left: 10px;
+    }
+
+    .table-white-box {
+        width: 100%; /* Garante que o container não encolha */
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+
+
+
+</style>
+
 @code {
-    List<ChamadoForm> chamados = new();
+    List<Chamado> chamados = new();
     int emAberto = 0;
     int emAndamento = 0;
     int finalizados = 0;
@@ -100,7 +128,7 @@
 
     private async Task CarregarChamados()
     {
-        var todos = await Http.GetFromJsonAsync<List<ChamadoForm>>("api/chamado");
+        var todos = await Http.GetFromJsonAsync<List<Chamado>>("api/chamado");
 
         // Filtra só os chamados do usuário logado pelo Id
         chamados = todos.Where(c => c.UsuarioId == Sessao.IdUsuario).ToList();
@@ -121,10 +149,10 @@
 
     string GetCorStatus(string status) => status switch
     {
-        "Aberto" => "#e74d4d",
-        "Andamento" => "#ffa500",
-        "Finalizado" => "#1dc807",
-        _ => "#000"
+        "Aberto" => "#ff7675",      // Vermelho Coral
+        "Andamento" => "#ffa500",   // Laranja (para bater com sua imagem 2)
+        "Finalizado" => "#1dc807",  // Verde
+        _ => "#636e72"
     };
 
 }

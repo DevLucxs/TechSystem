@@ -1,4 +1,4 @@
-﻿using cadastro.chamado.models;
+﻿using cadastro.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
 
@@ -9,9 +9,9 @@ namespace cadastro.chamado.database
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Chamado> Chamados { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; } // ← ESSENCIAL!
-        public DbSet<RelatorioDto> Relatorios { get; set; }
-        public DbSet<NotificacaoDto> Notificacoes { get; set; }
+        public DbSet<cadastro.Shared.Models.Usuario> Usuarios { get; set; }// ← ESSENCIAL!
+        public DbSet<Relatorio> Relatorios { get; set; }
+        public DbSet<Notificacao> Notificacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

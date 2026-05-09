@@ -1,50 +1,512 @@
-
 :root {
-	/* responsive margins / paddings */
-	--margin-sm: 16px;
-	--margin-md: 32px;
+    /* Cores do Sistema */
+    --blue-accent: #05a6de;
+    --blue-dark: #1e272e;
+    --bg-fundo: #f4f7fa;
+    --white: #ffffff;
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --border-color: #dfe6e9;
+    /* Status */
+    --color-open: #ff7675;
+    --color-progress: #fab1a0;
+    --color-done: #55efc4;
+    /* Medidas */
+    --header-h: 80px;
+    --sidebar-w: 95px;
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 * {
-	--min-screen-size: 430;
-	--max-screen-size: 1918;
-	--interpolate-diff: calc(var(--max-font-size) - var(--min-font-size));
-	--interpolate: clamp(calc(var(--min-font-size) * 1px), calc((var(--min-font-size) * 1px) + var(--interpolate-diff) * ((100vw - calc(var(--min-screen-size) * 1px)) / (var(--max-screen-size) - var(--min-screen-size)))), calc(var(--max-font-size) * 1px));
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
 }
 
-html {
-	height: 100%;
-	font-size: 16px;
-}
-
-
-
-/* text utility classes */
-
-.subtitle {
-	font-size: 36px;
-	font-family: 'Inter';
-	font-weight: 700;
-	line-height: normal;
-	letter-spacing: 0px;
-}
-
-.text {
-	font-size: 24px;
-	font-family: 'Inter';
-	font-weight: 700;
-	line-height: normal;
-	letter-spacing: 0px;
+body {
+    background-color: var(--bg-fundo);
+    color: var(--text-main);
+    overflow: hidden;
 }
 
 
 
-/* button hover utility classes */
-
-.hover-bright:hover {
-	filter: brightness(1.2);
+/* --- ESTRUTURA DO LAYOUT --- */
+.app-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
-.hover-dark:hover {
-	filter: brightness(0.85);
+.main-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
 }
+
+/* Header */
+.top-header {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px); /* Efeito de vidro */
+    height: 70px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Seção da Logo */
+.header-logo-section {
+    display: flex;
+    align-items: center; /* Centraliza verticalmente a logo com o texto */
+    gap: 15px;
+    height: 100%; /* Ocupa a altura total do header */
+}
+
+.main-app-logo {
+    height: 105px; /* Tamanho que já definimos */
+    width: auto;
+    /* AJUSTES DE POSIÇÃO: */
+    margin-left: -32px; /* Joga para a esquerda (valores negativos puxam) */
+    margin-right: 10px; /* Empurra o texto ao lado para a direita */
+    margin-top: -40px; /* Sobe a logo um pouco */
+    margin-bottom: 5px; /* Desce a logo (ou empurra o que está embaixo) */
+}
+
+    .main-app-logo:hover {
+        transform: scale(1.1); /* Efeito de zoom ao passar o mouse */
+    }
+
+.logo-divider {
+    width: 1px;
+    height: 30px; /* Aumentei um pouco para acompanhar a logo maior */
+    background: #e0e0e0;
+    margin: 0 5px;
+}
+
+.app-brand-name {
+    font-size: 1.2rem; /* Aumentei o texto para equilibrar com a logo */
+    font-family: 'Inter', sans-serif;
+    color: #1e272e;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+
+/* Seção de Perfil */
+.header-profile-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+    .header-profile-section:hover {
+        background: #f8f9fa;
+    }
+
+.profile-text {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.user-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e272e;
+    line-height: 1.2;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: var(--blue-accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Avatar com Indicador de Status */
+.avatar-wrapper {
+    position: relative;
+}
+
+.profile-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px; /* Avatar levemente quadrado fica mais moderno */
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+    .status-indicator.online {
+        background-color: #00b894;
+    }
+
+/* Sidebar */
+.sidebar-admin {
+    width: var(--sidebar-w);
+    background: rgba(223, 230, 233, 0.7); /* Cor da sidebar com transparência */
+    backdrop-filter: blur(12px); /* Efeito de vidro fosco */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30px 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 10;
+}
+
+/* Ajuste na classe nav-item para ser o container do botão */
+.nav-item {
+    position: relative;
+    margin: 8px 12px;
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+/* Nova regra para os botões dentro dos itens */
+.nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 18px; /* Aumentei um pouco o clique */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: var(--transition);
+}
+
+    .nav-btn img {
+        width: 30px;
+        height: 30px;
+        display: block;
+    }
+
+
+    .nav-item:hover {
+        background: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+
+    /* Indicador lateral quando o mouse passa */
+    .nav-item::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        width: 4px;
+        height: 0; /* Começa com altura 0 */
+        background: var(--blue-accent);
+        border-radius: 0 10px 10px 0;
+        transition: all 0.3s ease;
+        box-shadow: 2px 0 8px var(--blue-accent);
+    }
+
+    .nav-item:hover::before {
+        height: 40%; /* Cresce ao passar o mouse */
+    }
+
+    .nav-btn:hover img[style*="filter"] {
+        animation: bell-shake 0.5s ease-in-out;
+    }
+
+@keyframes bell-shake {
+    0% {
+        transform: rotate(0);
+    }
+
+    15% {
+        transform: rotate(15deg);
+    }
+
+    30% {
+        transform: rotate(-15deg);
+    }
+
+    45% {
+        transform: rotate(10deg);
+    }
+
+    60% {
+        transform: rotate(-10deg);
+    }
+
+    100% {
+        transform: rotate(0);
+    }
+}
+
+.badge-alerta {
+    background: #ff4757;
+    color: white;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: bold;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: 2px solid white;
+    box-shadow: 0 0 12px rgba(255, 71, 87, 0.5);
+}
+
+/* Container Principal de Conteúdo */
+.page-container {
+    flex: 1;
+    padding: 35px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* --- COMPONENTES DE DASHBOARD --- */
+
+/* Cards de Status */
+.dashboard-cards {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between; /* Distribui bem o espaço */
+    margin-top: 40px;
+    margin-bottom: 30px;
+    flex-wrap: wrap; /* Se a tela for pequena, eles pulam para a linha de baixo em vez de esmagar */
+}
+
+.card-box {
+    flex: 1; /* Faz todos os cards terem o mesmo tamanho */
+    min-width: 250px; /* NÃO deixa o card diminuir menos que 250px */
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+    .card-box:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Ajuste para as imagens dentro dos cards não sumirem */
+    .card-box img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+    }
+
+.aberto {
+    background: linear-gradient(135deg, #ff7675, #d63031);
+}
+
+.andamento {
+    background: linear-gradient(135deg, #fab1a0, #e17055);
+}
+
+.finalizado {
+    background: linear-gradient(135deg, #55efc4, #00b894);
+}
+
+/* Bloco Branco (Tabelas e Forms) */
+.table-white-box {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+/* Container da linha (Header e Body) */
+.grid-table-row {
+    display: grid;
+    /* Ajuste as frações (fr) conforme a necessidade de espaço de cada coluna */
+    grid-template-columns: 0.5fr 2fr 1fr 1.2fr 1.2fr 1.2fr 1.5fr;
+    align-items: center; /* Centraliza verticalmente o conteúdo (selects, inputs, texto) */
+    padding: 12px 20px;
+    gap: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    text-align: center; /* Centraliza o texto horizontalmente */
+}
+
+/* Garante que o Header e as Linhas tenham a mesma estrutura */
+.header-row {
+    background-color: #f8fafc;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Ajuste para que os selects e inputs não fiquem colados no topo */
+.grid-table-row div {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente o conteúdo da célula */
+    align-items: center; /* Centraliza verticalmente o conteúdo da célula */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Estilo para os inputs e selects dentro da tabela para não quebrarem o layout */
+.grid-table-row select,
+.grid-table-row input {
+    width: 100%;
+    max-width: 140px; /* Limita o tamanho para não empurrar a coluna */
+    text-align: center;
+}
+
+/* --- FORMULÁRIOS E INPUTS --- */
+input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: #fdfdfd;
+    transition: var(--transition);
+    outline: none;
+}
+
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--blue-accent);
+        box-shadow: 0 0 0 3px rgba(5, 166, 222, 0.1);
+    }
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+/* Botões Generais */
+.btn-primary {
+    background: var(--blue-accent);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+    .btn-primary:hover {
+        background: #048ebf;
+    }
+
+/* Modais */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+
+/* Container do formulário com efeito Glass */
+.relatorio-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+/* Inputs minimalistas */
+.modern-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #f1f2f6;
+    border-radius: 12px;
+    background: #f8f9fa;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+    .modern-input:focus {
+        background: white;
+        border-color: var(--blue-accent);
+        box-shadow: 0 0 0 4px rgba(5, 166, 222, 0.1);
+    }
+
+/* Dropzone de arquivos enfeitada */
+.file-dropzone {
+    border: 2px dashed #dfe6e9;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    background: #fdfdfd;
+}
+
+    .file-dropzone:hover {
+        border-color: var(--blue-accent);
+        background: rgba(5, 166, 222, 0.02);
+    }
+
+/* Botões com gradiente e elevação */
+.btn-submit {
+    background: linear-gradient(135deg, #05a6de, #048ebf);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(5, 166, 222, 0.3);
+    transition: all 0.3s ease;
+}
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 20px rgba(5, 166, 222, 0.4);
+    }
+

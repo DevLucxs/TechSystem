@@ -1,138 +1,261 @@
 ﻿@page "/relatorios"
+@using cadastro.Shared.Models
 @inject NavigationManager Navigation
 @inject HttpClient Http
 @layout Shared.TechSystemLayout
-@using cadastro.Client.Models
+@inject NotificacaoService NotiService
 @inject cadastro.Client.Services.IdiomaService IdiomaService
+@inject NotificacaoState State
+@inject cadastro.Client.Services.SessaoService Sessao
 
+<link rel="stylesheet" href="css/global.css" />
 
-<link rel="stylesheet" href="css/relatorio.css" />
-
-<EditForm Model="@relatorio" OnValidSubmit="EnviarRelatorio">
-    <div class="main-container">
-        <div class="card-chamado">
-            <h1>
-                <img src="assets/docs icon.png" alt="Documentos" />
-                RELATÓRIO
-            </h1>
-
-            <div class="abrir-chamado-campo">
-                <label>* Título:</label>
-                <InputText @bind-Value="relatorio.Titulo" />
+<div class="page-container">
+    <EditForm Model="@modelRelatorio" OnValidSubmit="EnviarRelatorio">
+        <div class="relatorio-card">
+            <div class="section-header" style="margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+                <img src="assets/docs icon.png" alt="Documentos" style="width: 40px;" />
+                <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--text-main);">RELATÓRIO</h1>
             </div>
 
-            <div class="abrir-chamado-campo">
-                <label>* Data:</label>
-                <InputDate @bind-Value="relatorio.Data" />
-            </div>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="abrir-chamado-campo">
+                    <label>Título:</label>
+                    <InputText @bind-Value="modelRelatorio.Titulo" class="modern-input" placeholder="Digite o título do relatório..." />
+                </div>
 
-            <div class="abrir-chamado-campo">
-                <label>* Descrição:</label>
-                <InputTextArea @bind-Value="relatorio.Descricao" />
-            </div>
+                <div class="abrir-chamado-campo">
+                    <label>* Data:</label>
+                    <InputDate @bind-Value="modelRelatorio.CriadoEm" class="modern-input" />
+                </div>
 
-            <div class="abrir-chamado-campo">
-                <label>Arquivo (Opcional):</label>
-                <InputFile OnChange="HandleFileUpload" />
-            </div>
+                <div class="abrir-chamado-campo">
+                    <label>* Descrição:</label>
+                    <InputTextArea @bind-Value="modelRelatorio.Mensagem" class="modern-input" rows="4" placeholder="Descreva os detalhes..." />
+                </div>
 
-            <div class="buttons">
-                <button type="submit" class="enviar">
-                    <img src="assets/confirm.png" /> Enviar
-                </button>
+                <div class="abrir-chamado-campo">
+                    <label>Arquivo (Opcional):</label>
+                    <div class="file-dropzone">
+                        <InputFile OnChange="HandleFileUpload" />
+                    </div>
+                </div>
 
-                <button type="button" class="cancelar" @onclick="Cancelar">
-                    <img src="assets/cancel.png" /> Cancelar
-                </button>
+                <div class="buttons" style="display: flex; gap: 15px; margin-top: 10px;">
+                    <button type="submit" class="btn-submit">
+                         Enviar
+                    </button>
 
-                <button type="button" class="enviar" @onclick="AbrirModal">
-                    <img src="assets/docs icon.png" /> Ver Relatórios
-                </button>
+                    <button type="button" @onclick="() => AlternarModalLista()" style="background: #1e272e; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px;">
+                        <img src="assets/docs icon.png" style="width: 20px; filter: brightness(0) invert(1);" /> Ver Relatórios
+                    </button>
+
+                    <button type="button" @onclick="() => Cancelar()" style="background: #dfe6e9; color: #636e72; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: auto;">
+                        Cancelar
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-</EditForm>
+    </EditForm>
 
-<!-- Modal flutuante -->
-@if (mostrarModal)
-{
-    <div class="modal-overlay" @onclick="FecharModal">
-        <div class="modal-content" @onclick:stopPropagation="true">
-            <h2>Relatórios já feitos</h2>
-            @if (relatorios == null)
-            {
-                <p>Carregando...</p>
-            }
-            else if (!relatorios.Any())
-            {
-                <p>Nenhum relatório encontrado.</p>
-            }
-            else
-            {
-                <ul>
-                    @foreach (var r in relatorios)
-                    {
-                        <li>
-                            <strong>@r.Titulo</strong> - @r.Data.ToString("dd/MM/yyyy")<br />
-                            @r.Descricao
-                        </li>
-                    }
-                </ul>
-            }
-            <button class="cancelar" @onclick="FecharModal">Fechar</button>
-        </div>
-    </div>
-}
-
-@code {
-    RelatorioForm relatorio = new();
-    IBrowserFile arquivo;
-    List<RelatorioForm> relatorios;
-    bool mostrarModal = false;
-
-    async Task HandleFileUpload(InputFileChangeEventArgs e)
+    @* --- MODAL DE LISTA DE RELATÓRIOS --- *@
+    @if (mostrarModal)
     {
-        arquivo = e.File;
+        <div class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+            <div class="modal-content" style="background: white; padding: 30px; border-radius: 12px; width: 80%; max-width: 800px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0; color: #2f3542;">Relatórios Enviados</h2>
+                    <button @onclick="() => FecharTudo()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #eee; text-align: left;">
+                            <th style="padding: 12px;">Data</th>
+                            <th style="padding: 12px;">Título</th>
+                            <th style="padding: 12px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (carregando)
+                        {
+                            <tr>
+                                <td colspan="3" style="padding: 40px; text-align: center;">
+                                    @* Você pode colocar um GIF de spinner aqui ou apenas o texto *@
+                                    <div class="loader-simples"></div>
+                                    <p style="color: #3498db; font-weight: bold; margin-top: 10px;">Carregando relatórios...</p>
+                                </td>
+                            </tr>
+                        }
+                        else if (listaRelatorios.Any())
+                        {
+                            @foreach (var r in listaRelatorios)
+                            {
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px;">@r.CriadoEm.ToShortDateString()</td>
+                                    <td style="padding: 12px; font-weight: bold;">@r.Titulo</td>
+                                    <td style="padding: 12px;">
+                                        <button class="btn-submit" style="padding: 5px 10px; font-size: 0.8rem;" @onclick="() => AbrirDetalhes(r)">
+                                            Ver Detalhes
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3" style="padding: 20px; text-align: center; color: #999;">Nenhum relatório encontrado.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <button @onclick="() => FecharTudo()" class="btn-submit" style="background: #636e72;">Fechar</button>
+                </div>
+            </div>
+        </div>
     }
 
-    async Task EnviarRelatorio()
+    @* --- MODAL DE DETALHES ESPECÍFICOS --- *@
+    @if (mostrarDetalhes)
     {
-        var response = await Http.PostAsJsonAsync("https://localhost:7002/api/relatorios", relatorio);
+        <div class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1100;">
+            <div class="modal-content" style="background: white; padding: 40px; border-radius: 15px; width: 60%; max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <img src="assets/docs icon.png" style="width: 50px; margin-bottom: 10px;" />
+                    <h2 style="margin: 0; color: #2f3640;">@relatorioSelecionado.Titulo</h2>
+                    <span style="color: #7f8c8d; font-size: 0.9rem;">Enviado em @relatorioSelecionado.CriadoEm.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
 
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; border-left: 5px solid #3498db; margin-bottom: 25px;">
+                    <p style="white-space: pre-wrap; line-height: 1.6; color: #2f3542; margin: 0;">
+                        @relatorioSelecionado.Mensagem
+                    </p>
+                </div>
+
+                <div style="text-align: center;">
+                    <button @onclick="() => mostrarDetalhes = false" style="background: #2f3542; color: white; border: none; padding: 12px 40px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        Voltar para a Lista
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .loader-simples {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+
+@code {
+    private cadastro.Shared.Models.Relatorio modelRelatorio = new() { CriadoEm = DateTime.Now };
+    private List<cadastro.Shared.Models.Relatorio> listaRelatorios = new();
+    private bool mostrarModal = false;
+    private bool mostrarDetalhes = false;
+    private cadastro.Shared.Models.Relatorio relatorioSelecionado = new();
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e) => await Task.CompletedTask;
+
+    private bool carregando = false;
+
+    async Task EnviarRelatorio()
+{
+    try
+    {
+        // 1. Envia o Relatório para o Banco
+        var response = await Http.PostAsJsonAsync("api/relatorios", modelRelatorio);
+        
         if (response.IsSuccessStatusCode)
         {
-            var criado = await response.Content.ReadFromJsonAsync<RelatorioForm>();
-            Console.WriteLine($"Relatório criado: {criado.Titulo}");
-            // Atualiza lista e abre modal
+            // 2. CRIA A NOTIFICAÇÃO NO BANCO (Importante para o card aparecer na lista)
+            // Aqui enviamos uma notificação do tipo "admin" para que o filtro que ajustamos a encontre
+            var novaNoti = new Notificacao 
+            {
+                Titulo = modelRelatorio.Titulo,
+                Mensagem = modelRelatorio.Mensagem,
+                Tipo = "admin",
+                Icone = "docs",     // Preencha para não ir null
+                Tempo = "agora",    // Preencha para não ir null
+                UsuarioId = Sessao.IdUsuario,
+                CriadoEm = DateTime.Now,
+                Lida = false
+            };
+
+            await Http.PostAsJsonAsync("api/notificacoes", novaNoti);
+
+            // 3. ATIVA A BOLINHA NA HORA (Interface)
+            State?.NovoAlerta();
+
+            // 4. FEEDBACK VISUAL (Banner)
+            NotiService.Adicionar("Sucesso", "Relatório enviado e notificado!", "success");
+
+            // Limpa o formulário e recarrega a lista do modal
+            modelRelatorio = new cadastro.Shared.Models.Relatorio { CriadoEm = DateTime.Now };
             await CarregarRelatorios();
-            mostrarModal = true;
-            StateHasChanged();
         }
-        else
+    }
+    catch (Exception ex)
+    {
+        NotiService.Adicionar("Erro", ex.Message, "error");
+    }
+}
+
+    void AlternarModalLista()
+    {
+        mostrarModal = !mostrarModal;
+        if (mostrarModal)
         {
-            Console.WriteLine("Erro ao criar relatório");
+            // Não usamos 'await' aqui para o modal abrir na hora,
+            // mas o método interno gerencia o estado de carregamento.
+            _ = CarregarRelatorios();
         }
     }
 
     async Task CarregarRelatorios()
     {
-        relatorios = await Http.GetFromJsonAsync<List<RelatorioForm>>("https://localhost:7002/api/relatorios");
-        StateHasChanged();
+        try
+        {
+            carregando = true; // Começa a carregar
+            listaRelatorios = await Http.GetFromJsonAsync<List<cadastro.Shared.Models.Relatorio>>("api/relatorios") ?? new();
+        }
+        catch
+        {
+            listaRelatorios = new();
+        }
+        finally
+        {
+            carregando = false; // Termina de carregar (independente de erro ou sucesso)
+            StateHasChanged(); // Força a interface a atualizar
+        }
     }
 
-    void Cancelar()
+    void AbrirDetalhes(cadastro.Shared.Models.Relatorio r)
     {
-        Navigation.NavigateTo("/inicial");
+        relatorioSelecionado = r;
+        mostrarDetalhes = true;
     }
 
-    void AbrirModal()
-    {
-        mostrarModal = true;
-        CarregarRelatorios();
-    }
-
-    void FecharModal()
+    void FecharTudo()
     {
         mostrarModal = false;
+        mostrarDetalhes = false;
     }
+
+    void Cancelar() => Navigation.NavigateTo("/inicial");
 }

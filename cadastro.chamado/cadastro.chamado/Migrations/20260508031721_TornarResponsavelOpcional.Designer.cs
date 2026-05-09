@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using cadastro.chamado.database;
 
@@ -11,9 +12,11 @@ using cadastro.chamado.database;
 namespace cadastro.chamado.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260508031721_TornarResponsavelOpcional")]
+    partial class TornarResponsavelOpcional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,9 +81,6 @@ namespace cadastro.chamado.Migrations
                     b.Property<string>("Icone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Lida")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Mensagem")
                         .IsRequired()
@@ -166,7 +166,7 @@ namespace cadastro.chamado.Migrations
                             Email = "admin@techsystem.com",
                             Nome = "Administrador",
                             Role = "Admin",
-                            SenhaHash = "$2a$11$UYQYkfwiPlrV.YXDECFXYue/csSBIqfxwUaToxLhc0AAoj.7WgIty"
+                            SenhaHash = "$2a$11$TbGJJ0boSyG3wnCXvCdc.eueD5p0qQS4hZTXMqweXIcaeq3vXp8A."
                         },
                         new
                         {
@@ -174,7 +174,7 @@ namespace cadastro.chamado.Migrations
                             Email = "usuario@techsystem.com",
                             Nome = "Usuário Comum",
                             Role = "Usuario",
-                            SenhaHash = "$2a$11$L3MVNQYCOJXCHYITqnf8S.vHIpf1xuEe1iwfWODWqjjO9nbABqv1G"
+                            SenhaHash = "$2a$11$AMsj2RcWV3nKAqv4bBF7tuQ6KaLAIwJxNKjum6GTYTEDlShvfbtfS"
                         });
                 });
 #pragma warning restore 612, 618

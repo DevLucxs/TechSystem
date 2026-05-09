@@ -1,5 +1,5 @@
 ﻿using cadastro.chamado.database;
-using cadastro.chamado.models; // ← ESSENCIAL
+using cadastro.Shared.Models; // ← ESSENCIAL
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;

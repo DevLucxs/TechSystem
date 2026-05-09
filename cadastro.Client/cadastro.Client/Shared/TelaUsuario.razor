@@ -1,59 +1,111 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject NotificacaoService NotiService
 @inject cadastro.Client.Services.SessaoService Sessao
+@implements IDisposable
 
+@* Fontes e Estilos Globais *@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/global.css" />
 
-<link href="https://fonts.googleapis.com/css2?family=Inter&family=Roboto&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/home.css" />
+<div class="app-wrapper">
+    <header class="top-header">
+        <div class="header-content">
+            @* Lado Esquerdo: Logo Symbol *@
+            <div class="header-logo-section" @onclick="IrParaHome" style="cursor: pointer;">
+                <img src="assets/symbol.png" alt="Logo" class="main-app-logo" />
+                <div class="logo-divider"></div>
+                <span class="app-brand-name">TECH<strong>SYSTEM</strong></span>
+            </div>
 
-<div class="menu">
-    <div class="menu-frame">
-        <div class="menu-menu">
-            <header class="header">
-                <div class="header-logo-left">
-                    <div class="header-barra"></div>
-                    <img src="assets/_163d66ba-473a-40af.png" class="header-logo" />
+            @* Lado Direito: Perfil do Usuário *@
+            <div class="header-profile-section" @onclick="IrParaConfiguracao">
+                <div class="profile-text">
+                    @* Busca o nome direto da sua SessaoService *@
+                    <span class="user-name">@Sessao.NomeUsuario</span>
+                    <span class="user-role">Usuário</span>
                 </div>
-
-                <div class="header-profile-right">
-                    <p class="header-text-lucas">@Sessao.NomeUsuario</p>
-                    <img src="assets/Profile.png" class="header-profile-img" />
-                </div>
-
-            </header>
-
-            <div class="menu-row">
-                <div class="card-barra-lateral">
-                    <button class="barra-btn" @onclick="IrParaHome">
-                        <img src="assets/home.png" alt="Home" />
-                    </button>
-                    <button class="barra-btn" @onclick="IrParaChamado">
-                        <img src="assets/headphone icon.png" alt="Abrir Chamado" />
-                    </button>
-                    <button class="barra-btn" @onclick="IrParaNotificacao">
-                        <img src="assets/Notificacao icon.png" alt="Notificações" />
-                    </button>
-                    <button class="barra-btn" @onclick="IrParaConfiguracao">
-                        <img src="assets/config icon.png" alt="Configurações" />
-                    </button>
-                    <button class="barra-btn card-barra-lateral-exit-icon" @onclick="Sair">
-                        <img src="assets/exit.png" alt="Sair" />
-                    </button>
+                <div class="avatar-wrapper">
+                    <img src="assets/Profile.png" alt="Profile" class="profile-avatar" />
+                    <div class="status-indicator online"></div>
                 </div>
             </div>
         </div>
+    </header>
 
-        <div class="menu-group">
+    <div class="main-body">
+        @* Sidebar adaptada para o Usuário *@
+        <aside class="sidebar-admin">
+            <nav class="nav-menu" style="display: flex; flex-direction: column; align-items: center;">
+        
+                @* Home do Usuário *@
+                <div class="nav-item" title="Home">
+                    <button class="nav-btn" @onclick="IrParaHome">
+                        <img src="assets/home.png" />
+                    </button>
+                </div>
+
+                @* Abrir Chamado (Ícone de Headphone em vez de Docs) *@
+                <div class="nav-item" title="Abrir Chamado">
+                    <button class="nav-btn" @onclick="IrParaChamado">
+                        <img src="assets/headphone icon.png" />
+                    </button>
+                </div>
+
+                @* Notificações com Contador *@
+                <div class="nav-item" title="Notificações">
+                    <button class="nav-btn" @onclick="IrParaNotificacao">
+                        <img src="assets/Notificacao icon.png"
+                             style="@(State.Contador > 0 ? "filter: drop-shadow(0 0 5px var(--blue-accent));" : "")" />
+        
+                        @if (State.Contador > 0)
+                        {
+                            <span class="badge-alerta">@State.Contador</span>
+                        }
+                    </button>
+                </div>
+
+                @* Configurações *@
+                <div class="nav-item" title="Configurações">
+                    <button class="nav-btn" @onclick="IrParaConfiguracao">
+                        <img src="assets/config icon.png" />
+                    </button>
+                </div>
+            </nav>
+
+            @* Sair *@
+            <div class="nav-item logout" title="Sair" style="margin-bottom: 20px;">
+                <button class="nav-btn" @onclick="Sair">
+                    <img src="assets/exit.png" />
+                </button>
+            </div>
+        </aside>
+
+        @* Conteúdo da Página *@
+        <main class="page-container">
             @Body
-        </div>
+        </main>
     </div>
 </div>
 
 @code {
-    void IrParaHome() => Navigation.NavigateTo("/usuario"); 
+    [Inject] public NotificacaoState State { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Garante que o layout atualize se o contador mudar ou o nome de usuário carregar
+        State.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+
+    // Rotas específicas da área do Usuário
+    void IrParaHome() => Navigation.NavigateTo("/usuario");
     void IrParaChamado() => Navigation.NavigateTo("/chamado-usuario");
     void IrParaNotificacao() => Navigation.NavigateTo("/notificacoes-usuario");
     void IrParaConfiguracao() => Navigation.NavigateTo("/configuracoes-usuario");
     void Sair() => Navigation.NavigateTo("/");
 }
-

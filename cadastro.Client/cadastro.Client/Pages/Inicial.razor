@@ -1,178 +1,171 @@
 ﻿@page "/inicial"
 @inject NavigationManager Navigation
 @layout Shared.TechSystemLayout
-@using cadastro.Client.Models
+@using cadastro.Shared.Models
 @inject HttpClient Http
 @inject cadastro.Client.Services.IdiomaService IdiomaService
-
+@inject NotificacaoState State
 
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/inicial.css" />
+    <link rel="stylesheet" href="css/global.css" />
 
 </head>
 
 <body>
-    <div class="menu">
-        <div class="menu-frame">
-            <div class="menu-menu">
-
-                <div class="menu-row">
-
-                    <div class="menu-botton-em1">
-                        <img src="assets/sino.png" class="menu-img1" />
-
-                        <div class="card1">
-                            <p class="text">EM ABERTO</p>
-                            <h2 class="card-subtitle1 subtitle">@emAberto</h2>
-                        </div>
-                    </div>
-
-                    <div class="menu-botton-em2">
-                        <img src="assets/alert.png" class="menu-img2" />
-                        <div class="card2">
-                            <p class="text">EM ANDAMENTO</p>
-                            <h2 class="card-subtitle2 subtitle">@emAndamento</h2>
-                        </div>
-                    </div>
-
-                    <div class="menu-botton">
-                        <img src="assets/confirm.png" class="menu-img3" />
-                        <div class="menu-finalizadas text">FINALIZADAS</div>
-                        <h2 class="menu-subtitle subtitle">@finalizados</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-group">
-                <div class="menu-tabela">
-                    <div class="menu-botton-filter">
-                        <button class="btn-filter hover-dark" @onclick="AbrirFiltro">
-                            <img src="assets/filter.png" class="btn-filter-icon" type="image"/>
-                            <p class="btn-filter-label">Filtrar Chamados</p>
-                        </button>
-                    </div>
-
-                    @if (mostrarFiltro)
-                    {
-                        <div class="modal-overlay">
-                            <div class="modal">
-                                <h3>Filtrar Chamados</h3>
-
-                                <label>Status:</label>
-                                <select @bind="filtroStatus">
-                                    <option value="">Todos</option>
-                                    <option value="Aberto">Aberto</option>
-                                    <option value="Andamento">Em Andamento</option>
-                                    <option value="Finalizado">Finalizado</option>
-                                </select>
-
-                                <label>Prioridade:</label>
-                                <select @bind="filtroPrioridade">
-                                    <option value="">Todas</option>
-                                    <option value="Alta">Alta</option>
-                                    <option value="Média">Média</option>
-                                    <option value="Baixa">Baixa</option>
-                                </select>
-
-                                <label>Responsável:</label>
-                                <input type="text" @bind="filtroResponsavel" placeholder="Digite o nome" />
-
-                                <div class="modal-actions">
-                                    <button class="btn-apply" @onclick="AplicarFiltro">Aplicar</button>
-                                    <button class="btn-cancel" @onclick="FecharFiltro">Cancelar</button>
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-
-                    <div class="menu-col">
-                        <div class="menu-titulos">
-                            <div>ID</div>
-                            <div>Chamados</div>
-                            <div>Data de Abertura</div>
-                            <div>Prioridade</div>
-                            <div>Status</div>
-                            <div>Previsão</div>
-                            <div>Aprovação</div>
-                        </div>
-
-                        @foreach (var chamado in chamados)
-                        {
-                            <div class="linha">
-                                <div>@chamado.Id</div>
-                                <div>@chamado.Titulo</div>
-                                <div>@chamado.DataCriacao.ToString("dd/MM/yyyy HH:mm")</div>
-                                <div>
-                                    <button class="btn" style="background-color:@GetCorPrioridade(chamado.Prioridade)">
-                                        @chamado.Prioridade.Substring(0, 1)
-                                    </button>
-                                </div>
-
-                                <div style="color:@GetCorStatus(chamado.Status)">
-                                    @(string.IsNullOrWhiteSpace(chamado.Status) ? "-" : chamado.Status)
-
-                                    <!-- Botão para alternar status -->
-                                    <button class="btn-status" @onclick="() => MudarStatus(chamado.Id)">
-                                        ↻
-                                    </button>
-                                </div>
-
-
-                                <!-- Campo editável de Previsão -->
-                                <div>
-                                    <input type="date"
-                                           value="@(chamado.Previsao.HasValue
-                                                               ? chamado.Previsao.Value.ToString("yyyy-MM-dd")
-                                                           : DateTime.Today.ToString("yyyy-MM-dd"))"
-                                       @onchange="async e => await AtualizarPrevisao(chamado.Id, DateTime.Parse(e.Value?.ToString()))" />
-                                </div>
-
-
-                                <!-- Campo editável de Responsável -->
-                                <div>
-                                    <select @onchange="async e => await AtualizarResponsavel(chamado.Id, e.Value?.ToString())">
-                                        <option value="">Selecione</option>
-                                        <option value="David Alves" selected="@(chamado.Responsavel == "David Alves")">David Alves</option>
-                                        <option value="Rubens Machado" selected="@(chamado.Responsavel == "Rubens Machado")">Rubens Machado</option>
-                                        <option value="Geovane Alves" selected="@(chamado.Responsavel == "Geovane Alves")">Geovane Alves</option>
-                                    </select>
-                                </div>
-                            </div>
-                        }
-
-
-
-                        <div class="paginacao-numerica">
-                            @for (int i = 1; i <= TotalPaginas; i++)
-                            {
-                                <button class="pagina-btn @(i == paginaAtual ? "ativa" : "")" @onclick="() => IrParaPagina(i)">
-                                    @i
-                                </button>
-                            }
-
-                            @if (paginaAtual < TotalPaginas)
-                            {
-                                <button class="pagina-btn" @onclick="() => IrParaPagina(paginaAtual + 1)">›</button>
-                            }
-                        </div>
-
-
-                    </div>
-
-                </div>
-            </div>
+    <div class="dashboard-cards">
+        <div class="card-box aberto">
+            <img src="assets/sino.png" />
+            <div><p>ABERTOS</p><h2>@emAberto</h2></div>
         </div>
+        <div class="card-box andamento">
+            <img src="assets/alert.png" />
+            <div><p>EM ANDAMENTO</p><h2>@emAndamento</h2></div>
+        </div>
+        <div class="card-box finalizado">
+            <img src="assets/confirm1.png" />
+            <div><p>FINALIZADOS</p><h2>@finalizados</h2></div>
+        </div>
+    </div>
+
+    <div class="table-white-box">
+        <div class="grid-table-row header-row">
+            <div>ID</div>
+            <div>Chamado</div>
+            <div>Data</div>
+            <div>Nível</div>
+            <div>Status</div>
+            <div>Previsão</div>
+            <div>Responsável</div>
+        </div>
+
+        @foreach (var c in chamados)
+        {
+            <div class="grid-table-row">
+                <div style="font-weight: bold; color: #888;">#@c.Id</div>
+            
+                <div style="font-weight: 600; justify-content: flex-start; text-align: left;">
+                    @c.Titulo
+                </div>
+            
+                <div>@c.DataCriacao.ToShortDateString()</div>
+            
+                <div>
+                    <select @onchange="@(e => AtualizarPrioridade(c.Id, e.Value.ToString()))"
+                            class="badge-select"
+                            style="background-color: @GetCorPrioridade(c.Prioridade);">
+                        <option value="Alta" selected="@(c.Prioridade == "Alta")">Alta</option>
+                        <option value="Média" selected="@(c.Prioridade == "Média")">Média</option>
+                        <option value="Baixa" selected="@(c.Prioridade == "Baixa")">Baixa</option>
+                    </select>
+                </div>
+            
+                <div>
+                    <button @onclick="() => MudarStatus(c.Id)"
+                            class="status-btn"
+                            style="background-color: @GetCorStatus(c.Status);">
+                        @c.Status
+                    </button>
+                </div>
+            
+                <div>
+                    <input type="date"
+                           value="@c.Previsao?.ToString("yyyy-MM-dd")"
+                           @onchange="@(e => AtualizarPrevisao(c.Id, DateTime.Parse(e.Value.ToString())))"
+                           class="table-input" />
+                </div>
+            
+                <div>
+                    <select @onchange="@(e => AtualizarResponsavel(c.Id, e.Value.ToString()))" class="table-select">
+                        <option value="David Alves" selected="@(c.Responsavel == "David Alves")">David Alves</option>
+                        <option value="Rubens Machado" selected="@(c.Responsavel == "Rubens Machado")">Rubens Machado</option>
+                    </select>
+                </div>
+            </div>
+        }
     </div>
 </body>
 
+<style>
+
+    /* Container da linha (Header e Body) */
+    .grid-table-row {
+        display: grid;
+        /* Ajuste as frações (fr) conforme a necessidade de espaço de cada coluna */
+        grid-template-columns: 0.5fr 2fr 1fr 1.2fr 1.2fr 1.2fr 1.5fr;
+        align-items: center; /* Centraliza verticalmente o conteúdo (selects, inputs, texto) */
+        padding: 12px 20px;
+        gap: 15px;
+        border-bottom: 1px solid #f1f1f1;
+        text-align: center; /* Centraliza o texto horizontalmente */
+    }
+
+    /* Garante que o Header e as Linhas tenham a mesma estrutura */
+    .header-row {
+        background-color: #f8fafc;
+        font-weight: 800;
+        color: #475569;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        border-radius: 15px 15px 0 0;
+    }
+
+    /* Ajuste para que os selects e inputs não fiquem colados no topo */
+    .grid-table-row div {
+        display: flex;
+        justify-content: center; /* Centraliza horizontalmente o conteúdo da célula */
+        align-items: center; /* Centraliza verticalmente o conteúdo da célula */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Estilo para os inputs e selects dentro da tabela para não quebrarem o layout */
+    .grid-table-row select,
+    .grid-table-row input {
+        width: 100%;
+        max-width: 140px; /* Limita o tamanho para não empurrar a coluna */
+        text-align: center;
+    }
+
+    /* Botão de Status Estilo Cápsula */
+    .status-btn {
+        border: none;
+        color: white;
+        border-radius: 50px; /* Deixa as pontas totalmente arredondadas */
+        padding: 6px 16px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        width: 115px; /* Tamanho fixo para a tabela não "dançar" */
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        outline: none;
+    }
+
+        /* Efeito de brilho e subida ao passar o mouse */
+        .status-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Efeito de clique (pressionado) */
+        .status-btn:active {
+            transform: translateY(0);
+            filter: brightness(0.9);
+        }
+
+</style>
 
 @code {
-    List<ChamadoForm> chamados = new();
+    List<Chamado> chamados = new();
     int emAberto = 0;
     int emAndamento = 0;
     int finalizados = 0;
@@ -180,7 +173,7 @@
     int paginaAtual = 1;
     int tamanhoPagina = 6;
 
-    IEnumerable<ChamadoForm> ChamadosPaginados =>
+    IEnumerable<Chamado> ChamadosPaginados =>
         chamados.Skip((paginaAtual - 1) * tamanhoPagina).Take(tamanhoPagina);
 
     int TotalPaginas => (int)Math.Ceiling((double)chamados.Count / tamanhoPagina);
@@ -240,7 +233,23 @@
         }
     }
 
-
+    async Task AtualizarPrioridade(int id, string novaPrioridade)
+    {
+        var chamado = chamados.FirstOrDefault(c => c.Id == id);
+        if (chamado != null)
+        {
+            chamado.Prioridade = novaPrioridade;
+        
+            // Faz o PUT para o backend
+            var response = await Http.PutAsJsonAsync($"api/chamado/{id}", chamado);
+        
+            if (response.IsSuccessStatusCode)
+            {
+                State.NovoAlerta(); // <--- Avisa o sistema
+                StateHasChanged();
+            }
+        }
+    }
 
 
     protected override async Task OnInitializedAsync()
@@ -262,7 +271,7 @@
 
     private async Task CarregarChamados()
     {
-        chamados = await Http.GetFromJsonAsync<List<ChamadoForm>>("https://localhost:7002/api/chamado");
+        chamados = await Http.GetFromJsonAsync<List<Chamado>>("https://localhost:7002/api/chamado");
 
         emAberto = chamados.Count(c => c.Status == "Aberto");
         emAndamento = chamados.Count(c => c.Status == "Andamento");
@@ -284,10 +293,10 @@
     {
         return status switch
         {
-            "Aberto" => "#e74d4d",        // vermelho
-            "Andamento" => "#ffa500",     // laranja
-            "Finalizado" => "#1dc807",    // verde
-            _ => "#000"
+            "Aberto" => "#ff7675",      // Vermelho Coral
+            "Andamento" => "#ffa500",   // Laranja (para bater com sua imagem 2)
+            "Finalizado" => "#1dc807",  // Verde
+            _ => "#636e72"
         };
     }
 
@@ -296,6 +305,7 @@
         var chamado = chamados.FirstOrDefault(c => c.Id == id);
         if (chamado != null)
         {
+            // Lógica de ciclo de status
             chamado.Status = chamado.Status switch
             {
                 "Aberto" => "Andamento",
@@ -304,11 +314,19 @@
                 _ => "Aberto"
             };
 
-            await Http.PutAsJsonAsync($"api/chamado/{id}", chamado);
+            // Faz o PUT para o backend
+            var response = await Http.PutAsJsonAsync($"https://localhost:7002/api/chamado/{id}", chamado);
 
+            if (response.IsSuccessStatusCode)
+            {
+                // --- ADICIONE ESTA LINHA ---
+                // Isso notifica o sistema localmente e garante que a bolinha apareça
+                // se o seu Controller já estiver criando a linha de notificação no banco.
+                State.NovoAlerta();
 
-            await CarregarChamados(); // recarrega após mudar status
-            StateHasChanged();
+                await CarregarChamados();
+                StateHasChanged();
+            }
         }
     }
 

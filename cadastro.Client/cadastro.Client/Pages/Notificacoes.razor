@@ -1,95 +1,376 @@
 ﻿@page "/notificacoes"
 @inject HttpClient Http
 @layout Shared.TechSystemLayout
-@using cadastro.Client.Models
+@using cadastro.Shared.Models;
 @inject cadastro.Client.Services.IdiomaService IdiomaService
+@inject cadastro.Client.Services.SessaoService Sessao
+@implements IDisposable
+@inject NotificacaoState State
+@inject IJSRuntime JS
 
-
-<link rel="stylesheet" href="css/notificacao.css" />
-
-<div class="notificacoes-topo-esquerda">
-    <div class="notificacoes-box">
-        <h1 class="notificacoes-titulo">
-            <img src="assets/Notificacao icon.png" alt="Notificações" /> NOTIFICAÇÕES
-            @if (qtdNovosChamados > 0)
-            {
-                <span class="badge">@qtdNovosChamados</span>
-            }
-        </h1>
-        <div class="notificacoes-container">
-            @if (listaNotificacoes == null)
-            {
-                <p>Carregando notificações...</p>
-            }
-            else if (!listaNotificacoes.Any())
-            {
-                <p>Nenhuma notificação encontrada.</p>
-            }
-            else
-            {
-                @foreach (var n in listaNotificacoes)
-                {
-                    <div class="notificacao @(n.Tipo?.ToLower())">
-                        <div class="notificacao-icon">@n.Icone</div>
-                        <div class="notificacao-conteudo">
-                            <div class="notificacao-titulo">@n.Titulo</div>
-                            <div class="notificacao-mensagem">@n.Mensagem</div>
-                            <div class="notificacao-tempo">@n.Tempo</div>
-                        </div>
-                    </div>
-                }
-            }
+<div class="page-container">
+    
+    <div class="header-central">
+        <div>
+            <h1 class="titulo-principal">@GetTexto("Titulo")</h1>
+            <p class="subtitulo">Gerencie os alertas e atualizações críticas do sistema.</p>
         </div>
+
+        @if (listaNotificacoes != null && listaNotificacoes.Any())
+        {
+            <button class="btn-limpar-moderno" @onclick="LimparTudo">
+                <span class="icon-btn">🧹</span> Marcar todas como lidas
+            </button>
+        }
     </div>
+
+    <div class="notificacoes-feed">
+        @if (listaNotificacoes == null)
+        {
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Sincronizando painel administrativo...</p>
+            </div>
+        }
+        else if (!listaNotificacoes.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon-box">
+                    <span style="font-size: 2rem;">🚀</span>
+                </div>
+                <h3>Tudo em ordem!</h3>
+                <p>Nenhuma nova notificação pendente no painel.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var n in listaNotificacoes)
+            {
+                @* A borda esquerda no Admin é o Azul Accent que você usa *@
+                <div class="noti-card-premium" style="border-left: 6px solid #05a6de" @onclick="() => AbrirDetalhes(n)">
+                    <div class="noti-status-icon">
+                        @if (n.Tipo.ToLower() == "admin")
+                        {
+                            <span class="icon-pulse">🚀</span>
+                        }
+                        else
+                        {
+                            <span>✅</span>
+                        }
+                    </div>
+                     
+                    <div class="noti-info">
+                        <div class="noti-top-row">
+                            <span class="noti-badge-tipo-admin">
+                                @n.Tipo.ToUpper()
+                            </span>
+                            <span class="noti-date">@n.CriadoEm.ToString("dd MMM, HH:mm")</span>
+                        </div>
+                        <h4 class="noti-headline">@n.Titulo</h4>
+                        <p class="noti-subtext">@n.Mensagem</p>
+                    </div>
+
+                    <div class="noti-arrow">
+                        <span>›</span>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+
+        @if (mostrarModalRelatorio)
+    {
+            <div class="modal-overlay-noti" @onclick="() => mostrarModalRelatorio = false">
+                <div class="modal-content-noti" @onclick:stopPropagation="true">
+                    <div class="modal-header-noti">
+                        <div class="icon-box-noti">🚀</div>
+                        <div>
+                            <h2>@notificacaoSelecionada.Titulo</h2>
+                            <span>@notificacaoSelecionada.CriadoEm.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <button class="close-btn-noti" @onclick="() => mostrarModalRelatorio = false">&times;</button>
+                    </div>
+            
+                    <div class="modal-body-noti">
+                        <p>@notificacaoSelecionada.Mensagem</p>
+                    </div>
+
+                    <div class="modal-footer-noti">
+                        <button class="btn-entendido" @onclick="() => mostrarModalRelatorio = false">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        }
+
 </div>
 
+<style>
+    :root {
+        --bg-admin: #f8f9fc;
+        --text-main: #1e272e;
+        --text-muted: #868e96;
+        --accent-admin: #05a6de;
+    }
 
+    .page-container {
+        padding: 40px;
+        background: var(--bg-admin);
+        min-height: 100vh;
+    }
 
+    .header-central {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 40px;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 20px;
+    }
 
+    .titulo-principal {
+        font-weight: 850;
+        color: var(--text-main);
+        font-size: 2.2rem;
+        margin: 0;
+        letter-spacing: -1px;
+    }
+
+    .subtitulo { color: var(--text-muted); margin: 5px 0 0 0; }
+
+    /* Botão Limpar Estilo Usuário */
+    .btn-limpar-moderno {
+        background: #ffffff;
+        color: var(--text-main);
+        border: 1px solid #dcdde1;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-limpar-moderno:hover {
+        background: #f1f2f6;
+        border-color: var(--accent-admin);
+        color: var(--accent-admin);
+        transform: translateY(-1px);
+    }
+
+    /* Card Premium */
+    .noti-card-premium {
+        display: flex;
+        align-items: center;
+        background: white;
+        padding: 20px 25px;
+        border-radius: 16px;
+        gap: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        margin-bottom: 8px;
+    }
+
+    .noti-card-premium:hover {
+        transform: scale(1.005) translateX(8px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    .noti-status-icon {
+        width: 50px;
+        height: 50px;
+        background: #f0f9ff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .icon-pulse { animation: pulse-icon 2s infinite; }
+
+    @@keyframes pulse-icon {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .noti-info { flex: 1; }
+    .noti-top-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+
+    .noti-badge-tipo-admin {
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 6px;
+        background: #05a6de15;
+        color: var(--accent-admin);
+        letter-spacing: 0.5px;
+    }
+
+    .noti-date { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+    .noti-headline { margin: 0; font-size: 1.05rem; color: var(--text-main); font-weight: 700; }
+    .noti-subtext { margin: 4px 0 0 0; color: #57606f; font-size: 0.92rem; line-height: 1.4; }
+    .noti-arrow { color: #ced4da; font-size: 1.8rem; font-weight: 300; }
+
+    .empty-state { text-align: center; padding: 80px 20px; }
+    .empty-icon-box {
+        width: 80px; height: 80px; background: white; border-radius: 24px;
+        display: inline-flex; align-items: center; justify-content: center;
+        margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .modal-overlay-noti {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content-noti {
+        background: white;
+        width: 90%; max-width: 500px;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @@keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header-noti {
+        display: flex; align-items: center; gap: 15px;
+        margin-bottom: 20px; border-bottom: 1px solid #eee;
+        padding-bottom: 15px; position: relative;
+    }
+
+    .icon-box-noti {
+        width: 45px; height: 45px; background: #05a6de15;
+        border-radius: 12px; display: flex; align-items: center;
+        justify-content: center; font-size: 1.2rem;
+    }
+
+    .modal-header-noti h2 { margin: 0; font-size: 1.3rem; color: #1e272e; }
+    .modal-header-noti span { font-size: 0.8rem; color: #868e96; }
+
+    .close-btn-noti {
+        position: absolute; right: 0; top: 0;
+        background: none; border: none; font-size: 1.8rem;
+        cursor: pointer; color: #ced4da;
+    }
+
+    .modal-body-noti p {
+        color: #57606f; line-height: 1.6; font-size: 1rem;
+        white-space: pre-wrap; margin-bottom: 25px;
+    }
+
+    .btn-entendido {
+        width: 100%; background: #05a6de; color: white;
+        border: none; padding: 12px; border-radius: 12px;
+        font-weight: 700; cursor: pointer; transition: background 0.2s;
+    }
+
+    .btn-entendido:hover { background: #048ebf; }
+
+</style>
 
 @code {
     List<Notificacao> listaNotificacoes = new();
+    private bool _disposed;
+
+    private bool mostrarModalRelatorio = false;
+    private Notificacao notificacaoSelecionada = new();
 
     protected override async Task OnInitializedAsync()
     {
+        IdiomaService.OnChange += StateHasChanged;
         await CarregarNotificacoes();
-        _ = Task.Run(async () =>
-        {
-            while (true)
-            {
-                await CarregarNotificacoes();
-                StateHasChanged();
-                await Task.Delay(10000);
-            }
-        });
+        _ = Loop();
     }
 
-    int qtdNovosChamados = 0;
+    private async Task Loop()
+    {
+        while (!_disposed)
+        {
+            await Task.Delay(10000);
+            if (!_disposed) { await CarregarNotificacoes(); StateHasChanged(); }
+        }
+    }
 
     private async Task CarregarNotificacoes()
+{
+    try 
     {
-        listaNotificacoes = await Http.GetFromJsonAsync<List<Notificacao>>("https://localhost:7002/api/notificacoes");
+        var todas = await Http.GetFromJsonAsync<List<Notificacao>>("api/notificacoes");
+        if (todas != null)
+        {
+            // O SEGREDO: Admin vê o que é dele OU o que é do tipo "admin" (alertas gerais)
+            listaNotificacoes = todas
+                .Where(n => n.UsuarioId == Sessao.IdUsuario || n.Tipo.ToLower() == "admin")
+                .OrderByDescending(n => n.Id)
+                .ToList();
 
-        // conta quantos são do tipo "chamado" ou recentes
-        qtdNovosChamados = listaNotificacoes.Count(n => n.Tipo == "chamado");
+            // Contador do Sino (Bolinha)
+            var apenasNovasParaBolinha = listaNotificacoes
+                .Where(n => !State.IdsLidos.Contains(n.Id))
+                .ToList();
+
+            State.SetContador(apenasNovasParaBolinha.Count);
+            
+            StateHasChanged();
+        }
+    }
+    catch (Exception ex) { Console.WriteLine("Erro Admin: " + ex.Message); }
+}
+
+    private async Task AbrirDetalhes(Notificacao n)
+    {
+        notificacaoSelecionada = n;
+        mostrarModalRelatorio = true;
+    
+        // Marca como lido automaticamente ao abrir
+        if (!State.IdsLidos.Contains(n.Id))
+        {
+            State.IdsLidos.Add(n.Id);
+            await CarregarNotificacoes();
+        }
     }
 
-
+    private void LimparTudo()
+    {
+        if (listaNotificacoes != null)
+        {
+            foreach (var n in listaNotificacoes)
+            {
+                if (!State.IdsLidos.Contains(n.Id))
+                    State.IdsLidos.Add(n.Id);
+            }
+            State.Zerar();
+            StateHasChanged();
+        }
+    }
 
     private Dictionary<string, Dictionary<string, string>> textos = new()
     {
-        ["PORTUGUÊS"] = new() { ["Titulo"] = "INICIAL" },
-        ["ENGLISH"] = new() { ["Titulo"] = "HOME" },
-        ["ESPAÑOL"] = new() { ["Titulo"] = "INICIO" }
+        ["PORTUGUÊS"] = new() { ["Titulo"] = "Central de Alertas" },
+        ["ENGLISH"] = new() { ["Titulo"] = "Alert Center" },
+        ["ESPAÑOL"] = new() { ["Titulo"] = "Centro de Alertas" }
     };
 
-    private string GetTexto(string chave) =>
-        textos[IdiomaService.IdiomaAtual][chave];
+    private string GetTexto(string chave) => textos[IdiomaService.IdiomaAtual][chave];
 
-    protected override void OnInitialized()
+    public void Dispose()
     {
-        // se inscreve no evento para atualizar quando idioma mudar
-        IdiomaService.OnChange += StateHasChanged;
+        _disposed = true;
+        IdiomaService.OnChange -= StateHasChanged;
     }
 }
-

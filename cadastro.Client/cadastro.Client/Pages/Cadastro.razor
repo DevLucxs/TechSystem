@@ -1,8 +1,9 @@
 ﻿@page "/cadastro"
 @inject HttpClient Http
-@using cadastro.Client.Models
+@using cadastro.Shared.Models
 @inject NavigationManager Navigation
 @layout Shared.PublicLayout
+@using cadastro.Shared.Models;
 
 <head>
     <meta charset="utf-8" />
@@ -27,7 +28,7 @@
                 <form class="form" onsubmit="return false;">
                     <input class="field" type="text" placeholder="Nome Completo" @bind="usuario.Nome" required />
                     <input class="field" type="email" placeholder="Email" @bind="usuario.Email" required />
-                    <input class="field" type="password" placeholder="Senha" @bind="usuario.Senha" required />
+                    <input class="field" type="password" placeholder="Senha" @bind="usuario.SenhaHash" required />
                     <button class="btn btn-login" type="submit" @onclick="Cadastrar">Criar Conta</button>
                 </form>
 
